@@ -1,0 +1,106 @@
+명세서 수정 필요 항목
+
+
+수정 1. 버전
+버전: v1.2  →  버전: v1.3
+
+
+수정 2. 기술 스택 (섹션 2)
+아래 2줄 추가:
+AI API: Anthropic Claude API (claude-sonnet-4-20250514)
+        프로세스 자동 구조화 사용 / 프록시 서버 경유 권장
+Word 이미지: Base64 → ArrayBuffer 변환 후 ImageRun으로 실제 삽입
+
+
+수정 3. Word 내보내기 이미지 항목 (섹션 9)
+[기존]
+이미지 placeholder (images.length > 0 인 경우만)
+  : "이미지를 여기에 붙여넣기" 텍스트가 있는 빈 박스
+
+[변경]
+실제 이미지 삽입 (images.length > 0 인 경우만)
+  : Base64 → ArrayBuffer 변환 후 docx ImageRun으로 실제 삽입
+  : 이미지 너비 400pt 고정, 높이 비율 유지
+  : 이미지 여러 장인 경우 세로 순서로 나열
+  : 타입 판별: 파일명 확장자로 png/jpg 구분
+
+
+수정 4. 기능 목록 (섹션 10) — F16 아래에 추가
+F-AI01  AI 프로세스 자동 구조화
+          위치: LV2 [+ 프로세스 추가] 클릭 시 방법 선택
+          입력: 프로세스명 + 담당 부서 + 자유 텍스트 업무 흐름
+          출력: Step[] JSON 배열 자동 파싱 → LV3 편집기로 이동
+          3단계: 방법선택 → 텍스트입력+API호출 → 결과 미리보기
+
+F-AI02  직접 입력 방식 (기존 AddModal 유지, 빈 프로세스 생성)
+
+
+수정 5. LV2 화면 설명 (섹션 6)
+[기존]
+프로세스 추가 버튼 (헤더)
+
+[변경]
+프로세스 추가 버튼 (헤더) — 클릭 시 방법 선택 모달
+  ① 직접 입력: 빈 프로세스 생성 후 LV3에서 단계 수동 추가
+  ② ✨ AI 자동 생성: 텍스트 입력 → Claude API → 단계 자동 구성
+
+
+추가 6. 새 컴포넌트 (섹션 7 하단에 추가)
+-- 7.8 AddMethodModal --
+props: { onClose, onSelectDirect, onSelectAI }
+용도: 프로세스 추가 방법 선택
+구현:
+  - 두 가지 카드 형태 선택지
+  - ✍️ 직접 입력: onSelectDirect 호출 → 기존 AddModal
+  - ✨ AI 자동 생성: onSelectAI 호출 → AIGenerateModal
+
+-- 7.9 AIGenerateModal --
+props: { deptId, groupId, dept, onClose, onComplete }
+용도: AI 프로세스 자동 구조화 3단계 위저드
+구현:
+  Step 1 — 입력 폼:
+    - 프로세스명 (필수)
+    - 담당 부서 (기본값: 현재 그룹 부서)
+    - 담당자
+    - 업무 흐름 설명 (textarea, A→B→C 또는 자유 텍스트)
+    - [✨ AI로 구조화] 버튼
+
+  Step 2 — 로딩:
+    - "AI가 프로세스를 분석 중입니다" 메시지
+    - 프로그레스 바 애니메이션
+    - Claude API 호출 (claude-sonnet-4-20250514)
+
+  Step 3 — 결과 미리보기:
+    - 생성된 단계 목록 (읽기 전용 카드)
+    - 각 카드: 단계명 / 화면명 / PT / Logic 요약
+    - [← 다시 입력] [편집기에서 열기 →]
+    - "편집기에서 열기" 클릭 시 onComplete(process) 호출
+
+  API 프롬프트:
+    "다음 업무 흐름을 분석하여 JSON 배열만 응답하세요.
+     배열 외 다른 텍스트 없이 JSON만 출력하세요.
+     업무흐름: {userInput} / 담당부서: {dept}
+     각 항목: title, screenName, dept, pt, logic, warning"
+
+  에러 처리:
+    - API 실패 → "다시 시도" 버튼 표시
+    - JSON 파싱 실패 → Step 1로 복귀, 안내 메시지
+    - API 키 없음 → 직접 입력 방식으로 안내
+
+
+추가 7. 컴포넌트 트리 (섹션 12) — 모달 목록 하단에 추가
+  └── AddMethodModal (조건부 렌더)
+  └── AIGenerateModal (조건부 렌더)
+
+
+추가 8. 주의사항 (섹션 15) — 하단에 추가
+8. AI API 키 보안
+   - .env 파일에 REACT_APP_ANTHROPIC_API_KEY 로 관리
+   - 클라이언트 코드에 직접 하드코딩 금지
+   - 프로덕션 환경에서는 Netlify Function 등 프록시 서버 경유 필수
+   - MVP 개발 단계에서는 환경변수 직접 사용 허용
+
+9. Word 이미지 삽입 주의
+   - Base64 헤더 제거 필수: base64.split(',')[1]
+   - 확장자로 타입 판별: jpg/jpeg → "jpg", 나머지 → "png"
+   - 이미지 크기 고정 (400pt × 280pt) 또는 원본 비율 유지 중 선택

@@ -1,0 +1,27 @@
+# 시크릿/환경변수 (절대 커밋 금지)
+.env
+.env.*
+*.env
+.env.local
+api.env
+.claude/api.env
+
+# 빌드 산출물
+dist/
+build/
+node_modules/
+
+# 로그/임시 파일
+logs/
+archive/
+output/
+
+# 시스템 파일
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 에디터
+.vscode/
+*.swp
+*.swo
