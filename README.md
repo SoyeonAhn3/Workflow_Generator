@@ -112,8 +112,8 @@ Department (부서)
 | | 이미지 첨부 (IndexedDB 저장) | 🔲 |
 | | LinearFlow 다이어그램 | 🔲 |
 | | SwimLane 다이어그램 | 🔲 |
-| | 사이드바 네비게이션 | 🔲 |
-| | LocalStorage 자동 저장 | 🔲 |
+| | 사이드바 네비게이션 (LV1/LV2) | ✅ |
+| | LocalStorage 자동 저장 | ✅ |
 | | 그룹 단위 Word 내보내기 | 🔲 |
 | | 삭제 확인 팝업 | 🔲 |
 | **AI 기능** | AI 프로세스 자동 구조화 | 🔲 |
@@ -164,9 +164,9 @@ processflow/
 │   └── functions/
 │       └── claude.js        # Claude API 프록시 (API 키 서버사이드)
 ├── Phase/
-│   ├── Phase0_환경설정.md           # 🔲 미시작
-│   ├── Phase1_저장소레이어.md        # 🔲 미시작
-│   ├── Phase2_스킬생성_앱골격.md     # 🔲 미시작
+│   ├── Phase0_환경설정.md           # ✅ 완료
+│   ├── Phase1_저장소레이어.md        # ✅ 완료
+│   ├── Phase2_스킬생성_앱골격.md     # ✅ 완료
 │   ├── Phase3_CRUD_삭제핸들러.md     # 🔲 미시작
 │   ├── Phase4_다이어그램.md          # 🔲 미시작
 │   ├── Phase5_Word내보내기.md        # 🔲 미시작
@@ -185,9 +185,9 @@ processflow/
 
 | Phase | 내용 | 상태 |
 |-------|------|------|
-| **Phase 0** | 프로젝트 환경 설정 (Vite, 패키지, constants.js) | 🔲 미시작 |
-| **Phase 1** | 저장소 레이어 (storage.js, imageDB.js, App 상태) | 🔲 미시작 |
-| **Phase 2** | 스킬 생성 + 앱 골격 + 네비게이션 | 🔲 미시작 |
+| **Phase 0** | 프로젝트 환경 설정 (Vite, 패키지, constants.js) | ✅ 완료 |
+| **Phase 1** | 저장소 레이어 (storage.js, imageDB.js, App 상태) | ✅ 완료 |
+| **Phase 2** | 스킬 생성 + 앱 골격 + 네비게이션 | ✅ 완료 |
 | **Phase 3** | CRUD + 삭제 핸들러 (IndexedDB 정합성 포함) | 🔲 미시작 |
 | **Phase 4** | 다이어그램 (LinearFlow + SwimLane) | 🔲 미시작 |
 | **Phase 5** | Word 내보내기 (docx 생성 + 이미지 삽입) | 🔲 미시작 |
@@ -248,5 +248,7 @@ netlify dev
 
 | 날짜 | 버전 | 내용 |
 |------|------|------|
-| 2026.03 | v1.3 | 아키텍처 확정 (Netlify Functions, IndexedDB 분리, CLAUDE_MODEL 상수화) |
-| 2026.03 | v1.2 | 최초 명세서 작성 |
+| 2026-03-13 | v1.5 | Phase 2 완료 — 스킬 5개, TopNav/Sidebar/LV1·2·3View, 뷰 전환 로직 |
+| 2026-03-13 | v1.4 | Phase 0·1 완료 — Vite+React 셋업, storage.js, imageDB.js, App 전역 상태 |
+| 2026-03-13 | v1.3 | 아키텍처 확정 (Netlify Functions, IndexedDB 분리, CLAUDE_MODEL 상수화) |
+| 2026-03-13 | v1.2 | 최초 명세서 작성 |
