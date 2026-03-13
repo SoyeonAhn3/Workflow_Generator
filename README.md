@@ -1,10 +1,7 @@
 # ⚡ ProcessFlow
 
 > SAP 기반 업무 흐름을 입력하면 자동으로 프로세스를 시각화하고 단계별 Word 매뉴얼을 생성해주는 웹 플랫폼
-<br>[보고서 산출물 예시]
 > <img width="774" height="750" alt="image" src="https://github.com/user-attachments/assets/23f3fcf0-ac55-492f-8ef3-6e167a099be4" />
-<br>
-[예상 화면도]
 > <img width="917" height="598" alt="image" src="https://github.com/user-attachments/assets/0e612ea2-6308-480e-bbb8-98aee205eb6e" />
 
 ---
