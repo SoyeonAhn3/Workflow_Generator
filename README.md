@@ -101,31 +101,33 @@ Department (부서)
 | 뷰 | 진입 조건 | 주요 기능 |
 |----|----------|-----------|
 | **LV1** 부서 목록 | 부서 선택 | 그룹 카드 목록, 그룹 추가/삭제 |
-| **LV2** 프로세스 그룹 | 그룹 선택 | 프로세스 카드, SwimLane, Word 내보내기 |
+| **LV2** 프로세스 그룹 | 그룹 선택 | 프로세스 카드, 부서별 Work flow, Word 내보내기 |
 | **LV3** 프로세스 상세 | 프로세스 선택 | LinearFlow, 단계별 상세, 단계 추가/수정/삭제 |
 
 ### 기능 목록
 
 | 구분 | 기능 | 상태 |
 |------|------|------|
-| **v1 필수** | 부서/그룹/프로세스 CRUD | 🔲 |
-| | 단계 추가/수정/삭제 | 🔲 |
-| | 이미지 첨부 (IndexedDB 저장) | 🔲 |
-| | LinearFlow 다이어그램 | 🔲 |
-| | SwimLane 다이어그램 | 🔲 |
+| **v1 필수** | 부서/그룹/프로세스 CRUD | ✅ |
+| | 단계 추가/수정/삭제 | ✅ |
+| | 그룹/프로세스 정보 수정 (수정 모달) | ✅ |
+| | 그룹 부서 이동 | ✅ |
+| | 이미지 첨부 (IndexedDB 저장) | ✅ |
+| | LinearFlow 다이어그램 | ✅ |
+| | 부서별 Work flow (SwimLane) 다이어그램 | ✅ |
 | | 사이드바 네비게이션 (LV1/LV2) | ✅ |
 | | LocalStorage 자동 저장 | ✅ |
-| | 그룹 단위 Word 내보내기 | 🔲 |
-| | 삭제 확인 팝업 | 🔲 |
-| **AI 기능** | AI 프로세스 자동 구조화 | 🔲 |
-| | 직접 입력 방식 | 🔲 |
+| | 삭제 확인 팝업 | ✅ |
+| | 그룹 단위 Word 내보내기 | ✅ |
+| **AI 기능** | AI 프로세스 자동 구조화 (3단계 위저드) | ✅ |
+| | 직접 입력 방식 | ✅ |
+| | Netlify Functions API 프록시 (JSON 재시도 3회) | ✅ |
 | **v1.5 권장** | 단계 순서 드래그 변경 | 🔲 |
 | | JSON 백업/복원 | 🔲 |
 | | 이미지 자동 리사이즈 | 🔲 |
 | **v2 추후** | Azure Cosmos DB + Blob Storage 연동 | 🔲 |
 | | Azure AD 사용자 인증 | 🔲 |
 | | 분기/반려 경로 SVG 표현 | 🔲 |
-| | 프로세스/그룹 정보 수정 | 🔲 |
 
 ---
 
@@ -158,6 +160,8 @@ processflow/
 │           ├── AddModal.jsx
 │           ├── AddMethodModal.jsx
 │           ├── AIGenerateModal.jsx
+│           ├── EditProcModal.jsx
+│           ├── EditGroupModal.jsx
 │           ├── StepModal.jsx
 │           ├── DeleteConfirmModal.jsx
 │           └── ExportModal.jsx
@@ -168,10 +172,10 @@ processflow/
 │   ├── Phase0_환경설정.md           # ✅ 완료
 │   ├── Phase1_저장소레이어.md        # ✅ 완료
 │   ├── Phase2_스킬생성_앱골격.md     # ✅ 완료
-│   ├── Phase3_CRUD_삭제핸들러.md     # 🔲 미시작
-│   ├── Phase4_다이어그램.md          # 🔲 미시작
-│   ├── Phase5_Word내보내기.md        # 🔲 미시작
-│   ├── Phase6_AI자동구조화.md        # 🔲 미시작
+│   ├── Phase3_CRUD_삭제핸들러.md     # ✅ 완료
+│   ├── Phase4_다이어그램.md          # ✅ 완료
+│   ├── Phase5_Word내보내기.md        # ✅ 완료
+│   ├── Phase6_AI자동구조화.md        # ✅ 완료
 │   └── Phase7_통합테스트_배포.md     # 🔲 미시작
 ├── Pre-Requirement/
 │   └── ProcessFlow_개발명세서.txt    # v1.3
@@ -189,10 +193,10 @@ processflow/
 | **Phase 0** | 프로젝트 환경 설정 (Vite, 패키지, constants.js) | ✅ 완료 |
 | **Phase 1** | 저장소 레이어 (storage.js, imageDB.js, App 상태) | ✅ 완료 |
 | **Phase 2** | 스킬 생성 + 앱 골격 + 네비게이션 | ✅ 완료 |
-| **Phase 3** | CRUD + 삭제 핸들러 (IndexedDB 정합성 포함) | 🔲 미시작 |
-| **Phase 4** | 다이어그램 (LinearFlow + SwimLane) | 🔲 미시작 |
-| **Phase 5** | Word 내보내기 (docx 생성 + 이미지 삽입) | 🔲 미시작 |
-| **Phase 6** | AI 자동 구조화 (Netlify Functions + 위저드) | 🔲 미시작 |
+| **Phase 3** | CRUD + 삭제 핸들러 (IndexedDB 정합성 포함) | ✅ 완료 |
+| **Phase 4** | 다이어그램 (LinearFlow + 부서별 Work flow) | ✅ 완료 |
+| **Phase 5** | Word 내보내기 (docx 생성 + 이미지 삽입) | ✅ 완료 |
+| **Phase 6** | AI 자동 구조화 (Netlify Functions + 위저드) + 그룹/프로세스 수정 | ✅ 완료 |
 | **Phase 7** | 통합 테스트 + Netlify 배포 | 🔲 미시작 |
 
 > 상세 내용은 [`Phase/`](./Phase/) 디렉토리 참고
@@ -238,7 +242,7 @@ netlify dev
 |-----------|---------|
 | LocalStorage | Azure Cosmos DB (NoSQL) |
 | IndexedDB | Azure Blob Storage |
-| 인증 없음 | Azure AD (Bosch 사내 계정) |
+| 인증 없음 | Azure AD |
 
 > 마이그레이션 전략: `saveToStorage()` / `saveImage()` 함수 시그니처 유지,
 > 내부 구현만 Azure SDK로 교체
@@ -249,6 +253,11 @@ netlify dev
 
 | 날짜 | 버전 | 내용 |
 |------|------|------|
+| 2026-03-16 | v2.0 | UI 전체 개선 — 카드 좌측 강조선 + 박스 그림자, LV2 프로세스 카드 태그/순번 뱃지, LV3 헤더 카드화, StepCard 정보 3칸 그리드 + 섹션 구분, 주의사항 단계 노란 강조 |
+| 2026-03-16 | v1.9 | Phase 6 완료 — AI 자동 구조화 (AddMethodModal, AIGenerateModal, claude.js), 그룹/프로세스 수정 모달, LV1~LV3 수정 버튼, selDept/selGroup/selProc 동기화 버그 수정 |
+| 2026-03-16 | v1.8 | Phase 5 완료 — wordExport.js + ExportModal.jsx, Word 파일 생성 + 이미지 삽입. ExportModal 문서 구성 파트 제거 |
+| 2026-03-16 | v1.7 | Phase 4 완료 — LinearFlow/부서별 Work flow 다이어그램, LV3View/LV2View 연결, 뒤로가기 상태 동기화 버그 수정 |
+| 2026-03-16 | v1.6 | Phase 3 완료 — 전체 CRUD UI, AddModal/StepModal/DeleteConfirmModal, 삭제 핸들러 4종, StepCard |
 | 2026-03-13 | v1.5 | Phase 2 완료 — 스킬 5개, TopNav/Sidebar/LV1·2·3View, 뷰 전환 로직 |
 | 2026-03-13 | v1.4 | Phase 0·1 완료 — Vite+React 셋업, storage.js, imageDB.js, App 전역 상태 |
 | 2026-03-13 | v1.3 | 아키텍처 확정 (Netlify Functions, IndexedDB 분리, CLAUDE_MODEL 상수화) |

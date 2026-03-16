@@ -31,7 +31,6 @@ export default function Sidebar({
   return (
     <div style={{
       width: open ? 250 : 48,
-      minHeight: '100vh',
       background: C.white,
       borderRight: `1px solid ${C.border}`,
       display: 'flex',

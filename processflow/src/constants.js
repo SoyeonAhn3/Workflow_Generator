@@ -16,6 +16,26 @@ export const C = {
   red:       "#EF4444",
   redLight:  "#FEF2F2",
   redBorder: "#FECACA",
+
+  // 페이지 배경
+  pageBg:    "#F0F4F8",
+
+  // 사이드바 (다크 테마)
+  sidebarBg:       "#1A3A5C",
+  sidebarBorder:   "#0F2540",
+  sidebarText:     "#C5D8EC",
+  sidebarSubText:  "#8FB5D4",
+  sidebarActiveBg: "rgba(46,117,182,0.35)",
+  sidebarHover:    "rgba(255,255,255,0.06)",
+
+  // 카드 그림자
+  cardShadow: "0 1px 4px rgba(0,0,0,0.08)",
+  cardShadowHover: "0 4px 16px rgba(0,0,0,0.13)",
+
+  // warning (주의사항)
+  warning:       "#b45309",
+  warningBg:     "#fffbeb",
+  warningBorder: "#fde68a",
 }
 
 // 부서별 아이콘 배경색 순환 팔레트

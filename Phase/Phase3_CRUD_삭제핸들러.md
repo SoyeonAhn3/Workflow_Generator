@@ -1,8 +1,8 @@
-# Phase 3 — CRUD + 삭제 핸들러 `🔲 미시작`
+# Phase 3 — CRUD + 삭제 핸들러 `✅ 완료`
 
 > 부서/그룹/프로세스/단계의 추가·수정·삭제를 완성하고, IndexedDB 이미지 정합성을 보장하는 삭제 핸들러를 구현한다
 
-**상태**: 🔲 미시작
+**상태**: ✅ 완료 (2026-03-16)
 **선행 조건**: Phase 2 완료 (스킬 4개 포함)
 
 ---
@@ -21,13 +21,13 @@
 
 | # | 작업 | 상태 |
 |---|------|------|
-| 1 | `LV1View.jsx` 그룹 카드 UI 완성 | 🔲 |
-| 2 | `LV2View.jsx` 프로세스 카드 UI 완성 (▼ 확장 제외) | 🔲 |
-| 3 | `LV3View.jsx` 단계 카드 UI 완성 (읽기 전용 본문) | 🔲 |
-| 4 | `AddModal.jsx` — lv1/lv2/lv3 레벨별 입력 폼 | 🔲 |
-| 5 | `StepModal.jsx` — 단계 추가/수정 + 이미지 첨부 | 🔲 |
-| 6 | `DeleteConfirmModal.jsx` | 🔲 |
-| 7 | 삭제 핸들러 4종 (부서/그룹/프로세스/단계) | 🔲 |
+| 1 | `LV1View.jsx` 그룹 카드 UI 완성 | ✅ |
+| 2 | `LV2View.jsx` 프로세스 카드 UI 완성 (▼ 확장 제외) | ✅ |
+| 3 | `LV3View.jsx` 단계 카드 UI 완성 (읽기 전용 본문) | ✅ |
+| 4 | `AddModal.jsx` — lv1/lv2/lv3 레벨별 입력 폼 | ✅ |
+| 5 | `StepModal.jsx` — 단계 추가/수정 + 이미지 첨부 | ✅ |
+| 6 | `DeleteConfirmModal.jsx` | ✅ |
+| 7 | 삭제 핸들러 4종 (부서/그룹/프로세스/단계) | ✅ |
 
 ---
 
@@ -173,3 +173,4 @@ updateProc(procId, p => ({
 | 날짜 | 내용 |
 |------|------|
 | 2026-03-12 | 최초 작성 |
+| 2026-03-16 | Phase 3 완료 — LV1/2/3View CRUD UI, AddModal/StepModal/DeleteConfirmModal, 삭제 핸들러 4종, StepCard 구현 완료 |
