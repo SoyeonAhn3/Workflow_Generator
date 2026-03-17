@@ -36,11 +36,14 @@ export const handler = async (event) => {
 배열 외 다른 텍스트 없이 JSON만 출력하세요.
 설명, 인사말, 마크다운 코드블록 없이 순수 JSON 배열만 반환하세요.
 
+중요: title(단계명)은 반드시 15자 이내로 간결하게 작성하세요. 핵심 동작만 짧게 표현합니다.
+예시: "전표 입력", "원가 배부 실행", "마감 처리", "검증 및 확인"
+
 업무흐름: ${userInput}
 담당부서: ${dept}
 
 각 항목 형식:
-{ "title": "단계명", "screenName": "화면명/T-Code", "dept": "담당부서", "pt": "소요시간", "logic": "상세 설명", "warning": "주의사항 (없으면 빈 문자열)" }`
+{ "title": "단계명 (15자 이내, 간결하게)", "screenName": "화면명/T-Code", "dept": "담당부서", "pt": "소요시간", "logic": "상세 설명", "warning": "주의사항 (없으면 빈 문자열)" }`
 
   let currentPrompt = basePrompt
   let lastResponse = ""

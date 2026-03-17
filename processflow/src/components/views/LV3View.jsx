@@ -23,91 +23,81 @@ export default function LV3View({ dept, group, proc, onDeleteProc, onEditProc, o
 
   return (
     <div>
-      {/* 뒤로가기 */}
+      {/* 뒤로가기 + 프로세스 그룹명 */}
       <button onClick={onBack} style={backBtnStyle}>
         ← {group?.name}
       </button>
 
-      {/* 프로세스 헤더 카드 */}
+      {/* 프로세스 상위 그룹 레이블 */}
+      <div style={{ fontSize: 13, color: C.blue, fontWeight: 600, marginBottom: 4 }}>
+        {group?.name}
+      </div>
+
+      {/* 프로세스 헤더 */}
       <div style={{
-        background: C.white,
-        border: `1px solid ${C.border}`,
-        borderLeft: `5px solid ${C.navy}`,
-        borderRadius: 12,
-        padding: '20px 24px',
-        marginBottom: 20,
-        boxShadow: C.cardShadow,
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+        marginBottom: 6,
       }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: C.navy, margin: '0 0 12px' }}>
-              {proc.name}
-            </h2>
-            {/* 메타 정보 행 */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: proc.description ? 12 : 0 }}>
-              {proc.dept && (
-                <span style={metaTagStyle}>
-                  🏢 {proc.dept}
-                </span>
-              )}
-              {proc.owner && (
-                <span style={metaTagStyle}>
-                  👤 {proc.owner}
-                </span>
-              )}
-              {proc.module && (
-                <span style={{ ...metaTagStyle, background: C.bluePale, color: C.blue, border: `1px solid ${C.blueLight}` }}>
-                  {proc.module}
-                </span>
-              )}
-              <span style={{ ...metaTagStyle, background: '#F0F4F8', color: C.gray500 }}>
-                📋 단계 {proc.steps?.length ?? 0}개
-              </span>
-            </div>
-            {proc.description && (
-              <p style={{ margin: 0, fontSize: 13, color: C.gray500, lineHeight: 1.65, borderTop: `1px solid ${C.border}`, paddingTop: 10 }}>
-                {proc.description}
-              </p>
-            )}
-          </div>
-          <div style={{ display: 'flex', gap: 8, marginLeft: 16, flexShrink: 0 }}>
-            <button onClick={() => onEditProc(proc)} style={editBtnStyle}>
-              ✏ 수정
-            </button>
-            <button onClick={() => onDeleteProc(proc)} style={deleteBtnStyle}>
-              🗑 삭제
-            </button>
-          </div>
+        <div>
+          <h2 style={{ fontSize: 26, fontWeight: 700, color: C.navy, margin: 0, letterSpacing: '-0.5px' }}>
+            {proc.name}
+          </h2>
+          {proc.description && (
+            <p style={{ margin: '8px 0 0', fontSize: 13, color: C.gray500, lineHeight: 1.65 }}>
+              {proc.description}
+            </p>
+          )}
         </div>
+        <button onClick={onAddStep} style={addBtnStyle}>
+          + 단계 추가
+        </button>
+      </div>
+
+      {/* 메타 정보 테이블 */}
+      <div style={{
+        display: 'flex',
+        borderTop: `1px solid ${C.border}`,
+        borderBottom: `1px solid ${C.border}`,
+        marginBottom: 28,
+        marginTop: 16,
+      }}>
+        {[
+          { label: '담당 부서', value: proc.dept || '—' },
+          { label: '프로세스 담당자', value: proc.owner || '—' },
+          { label: 'Module', value: proc.module || '—' },
+          { label: '업데이트', value: proc.updatedAt || '—' },
+          { label: '총 단계', value: `${proc.steps?.length ?? 0}단계` },
+        ].map((item, i) => (
+          <div key={i} style={{
+            flex: 1,
+            padding: '12px 16px',
+            borderRight: i < 4 ? `1px solid ${C.border}` : 'none',
+          }}>
+            <div style={{ fontSize: 11, color: C.gray500, marginBottom: 4, fontWeight: 500 }}>
+              {item.label}
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: C.gray700 }}>
+              {item.value}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* 전체 흐름도 */}
       <div style={{
         background: C.white, border: `1px solid ${C.border}`,
-        borderRadius: 10, padding: '16px 20px', marginBottom: 20,
+        borderRadius: 10, padding: '18px 22px', marginBottom: 28,
         boxShadow: C.cardShadow,
       }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ display: 'inline-block', width: 3, height: 14, background: C.blue, borderRadius: 2 }} />
+        <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 14 }}>
           전체 흐름도
         </div>
         <LinearFlow steps={proc.steps ?? []} />
       </div>
 
-      {/* 단계 목록 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: C.navy, display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ display: 'inline-block', width: 3, height: 14, background: C.blue, borderRadius: 2 }} />
-          단계 목록
-          <span style={{
-            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            background: C.blue, color: C.white,
-            fontSize: 11, fontWeight: 700,
-            width: 20, height: 20, borderRadius: '50%', marginLeft: 4,
-          }}>
-            {proc.steps?.length ?? 0}
-          </span>
-        </div>
+      {/* 단계별 상세 */}
+      <div style={{ fontSize: 16, fontWeight: 700, color: C.navy, marginBottom: 14 }}>
+        단계별 상세
       </div>
 
       {/* 단계 목록 */}
@@ -158,8 +148,7 @@ export default function LV3View({ dept, group, proc, onDeleteProc, onEditProc, o
             e.currentTarget.style.color = C.gray500
           }}
         >
-          <span style={{ fontSize: 18 }}>＋</span>
-          단계 추가
+          + 단계 추가
         </div>
       </div>
     </div>
@@ -168,28 +157,13 @@ export default function LV3View({ dept, group, proc, onDeleteProc, onEditProc, o
 
 const backBtnStyle = {
   background: 'none', border: 'none', cursor: 'pointer',
-  fontSize: 13, color: C.blue, fontWeight: 600,
-  padding: 0, marginBottom: 12, display: 'flex', alignItems: 'center', gap: 4,
+  fontSize: 13, color: C.blue, fontWeight: 500,
+  padding: 0, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 4,
 }
 
-const editBtnStyle = {
-  padding: '8px 16px', fontSize: 13, fontWeight: 600,
-  background: C.bluePale, color: C.blue, border: `1px solid ${C.blueLight}`,
+const addBtnStyle = {
+  padding: '9px 20px', fontSize: 13, fontWeight: 600,
+  background: C.navy, color: C.white, border: 'none',
   borderRadius: 8, cursor: 'pointer', whiteSpace: 'nowrap',
-  display: 'flex', alignItems: 'center', gap: 4,
-}
-
-const deleteBtnStyle = {
-  padding: '8px 16px', fontSize: 13, fontWeight: 600,
-  background: C.redLight, color: C.red, border: `1px solid ${C.redBorder}`,
-  borderRadius: 8, cursor: 'pointer', whiteSpace: 'nowrap',
-  display: 'flex', alignItems: 'center', gap: 4,
-}
-
-const metaTagStyle = {
-  display: 'inline-flex', alignItems: 'center',
-  background: C.gray100, color: C.gray500,
-  border: `1px solid ${C.border}`,
-  fontSize: 12, fontWeight: 500,
-  padding: '4px 10px', borderRadius: 20,
+  flexShrink: 0,
 }

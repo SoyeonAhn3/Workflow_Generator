@@ -30,40 +30,42 @@ export default function SwimLane({ steps }) {
     <div style={{ overflowX: 'auto', fontSize: 11 }}>
       <div style={{
         display: 'grid',
-        gridTemplateColumns: `80px repeat(${colCount}, minmax(100px, 1fr))`,
-        minWidth: colCount * 110 + 80,
+        gridTemplateColumns: `110px repeat(${colCount}, 180px)`,
+        width: 'max-content',
       }}>
         {/* ── 헤더 행 ── */}
         <div style={headerCellStyle}>부서</div>
-        {steps.map((step, i) => (
-          <div key={`h-${step.id}`} style={{
-            ...headerCellStyle,
-            borderLeft: `1px solid rgba(255,255,255,0.2)`,
-          }}>
-            <span style={{ fontWeight: 600 }}>{i + 1}. </span>
-            <span style={{
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>
-              {step.title}
-            </span>
-          </div>
-        ))}
+        <div style={{
+          ...headerCellStyle,
+          gridColumn: `2 / ${colCount + 2}`,
+          borderLeft: '1px solid rgba(255,255,255,0.15)',
+        }}>
+          업무 흐름
+        </div>
 
         {/* ── 레인 행 (부서별) ── */}
         {depts.map((dept, di) => {
           const deptColor = deptColorMap[dept]
           const isOdd = di % 2 === 1
-
           return [
             // 부서 레이블 셀
             <div key={`d-${dept}`} style={{
-              padding: '10px 8px',
+              padding: '16px 12px',
               background: isOdd ? C.gray100 : C.white,
-              fontWeight: 700, fontSize: 11, color: deptColor,
-              display: 'flex', alignItems: 'center',
+              display: 'flex', flexDirection: 'column', justifyContent: 'center',
               borderBottom: `1px solid ${C.border}`,
             }}>
-              {dept}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{
+                  display: 'inline-block', width: 3, height: 24,
+                  background: deptColor, borderRadius: 2, flexShrink: 0,
+                }} />
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: deptColor }}>
+                    {dept}
+                  </div>
+                </div>
+              </div>
             </div>,
 
             // 각 단계 셀
@@ -73,41 +75,73 @@ export default function SwimLane({ steps }) {
 
               return (
                 <div key={`c-${dept}-${step.id}`} style={{
-                  padding: '8px 6px',
+                  padding: '12px 10px',
                   background: isOdd ? C.gray100 : C.white,
                   borderBottom: `1px solid ${C.border}`,
                   borderLeft: `1px solid ${C.border}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  minHeight: 48,
+                  minHeight: 70,
                 }}>
                   {isActive ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       {/* 노드 */}
                       <div style={{
-                        background: deptColor, color: C.white,
-                        borderRadius: 6, padding: '6px 10px',
-                        fontSize: 10, fontWeight: 600, textAlign: 'center',
-                        maxWidth: 90, overflow: 'hidden', textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        position: 'relative',
+                        border: `2px solid ${deptColor}`,
+                        borderRadius: 7, padding: '10px 12px',
+                        background: C.white,
+                        textAlign: 'center',
+                        minWidth: 100,
+                        maxWidth: 140,
                       }}>
-                        {step.screenName || step.title}
+                        {/* 번호 뱃지 */}
+                        <div style={{
+                          position: 'absolute', top: -9, right: -9,
+                          width: 20, height: 20, borderRadius: '50%',
+                          background: deptColor, color: C.white,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 10, fontWeight: 700,
+                        }}>
+                          {si + 1}
+                        </div>
+                        {/* 화면명 / T-Code */}
+                        {step.screenName && (
+                          <div style={{ fontSize: 10, color: deptColor, fontWeight: 600, marginBottom: 3 }}>
+                            {step.screenName}
+                          </div>
+                        )}
+                        {/* 단계명 — 줄바꿈 허용 */}
+                        <div style={{
+                          fontSize: 11, fontWeight: 700, color: C.gray700,
+                          lineHeight: 1.4,
+                          wordBreak: 'keep-all',
+                          overflowWrap: 'break-word',
+                        }}>
+                          {step.title}
+                        </div>
+                        {/* PT */}
+                        {step.pt && (
+                          <div style={{ fontSize: 9, color: C.gray500, marginTop: 3 }}>
+                            PT: {step.pt}
+                          </div>
+                        )}
                       </div>
 
                       {/* 화살표 (마지막 단계 아닌 경우) */}
                       {si < steps.length - 1 && (
                         isLaneChange(si + 1) ? (
                           // 레인 전환: 점선 회색 화살표
-                          <svg width="18" height="20" style={{ flexShrink: 0 }}>
-                            <line x1="0" y1="10" x2="12" y2="10"
-                              stroke={C.gray300} strokeWidth="2" strokeDasharray="3,2" />
-                            <polygon points="11,6 18,10 11,14" fill={C.gray300} />
+                          <svg width="24" height="20" style={{ flexShrink: 0 }}>
+                            <line x1="0" y1="10" x2="15" y2="10"
+                              stroke={C.gray300} strokeWidth="1.5" strokeDasharray="3,2" />
+                            <polygon points="14,6 22,10 14,14" fill={C.gray300} />
                           </svg>
                         ) : (
                           // 같은 레인: 실선 부서색 화살표
-                          <svg width="18" height="20" style={{ flexShrink: 0 }}>
-                            <line x1="0" y1="10" x2="12" y2="10"
-                              stroke={deptColor} strokeWidth="2" />
-                            <polygon points="11,6 18,10 11,14" fill={deptColor} />
+                          <svg width="24" height="20" style={{ flexShrink: 0 }}>
+                            <line x1="0" y1="10" x2="15" y2="10"
+                              stroke={deptColor} strokeWidth="1.5" />
+                            <polygon points="14,6 22,10 14,14" fill={deptColor} />
                           </svg>
                         )
                       )}
@@ -119,13 +153,33 @@ export default function SwimLane({ steps }) {
           ]
         })}
       </div>
+
+      {/* 범례 */}
+      <div style={{ display: 'flex', gap: 18, marginTop: 12, paddingLeft: 4, flexWrap: 'wrap' }}>
+        {depts.map((dept) => (
+          <div key={dept} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11 }}>
+            <span style={{
+              display: 'inline-block', width: 14, height: 3,
+              background: deptColorMap[dept], borderRadius: 1,
+            }} />
+            <span style={{ color: deptColorMap[dept], fontWeight: 600 }}>{dept}</span>
+          </div>
+        ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11 }}>
+          <span style={{
+            display: 'inline-block', width: 14, height: 0,
+            borderTop: `2px dashed ${C.gray300}`,
+          }} />
+          <span style={{ color: C.gray500 }}>레인 전환</span>
+        </div>
+      </div>
     </div>
   )
 }
 
 const headerCellStyle = {
   background: C.navy, color: C.white,
-  padding: '8px 8px', fontWeight: 600, fontSize: 10,
+  padding: '10px 12px', fontWeight: 600, fontSize: 12,
   display: 'flex', alignItems: 'center',
   overflow: 'hidden',
 }

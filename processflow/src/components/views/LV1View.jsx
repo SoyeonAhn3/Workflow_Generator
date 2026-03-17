@@ -23,83 +23,68 @@ export default function LV1View({ dept, onSelectGroup, onAddGroup, onDeleteDept,
     <div>
       {/* 헤더 */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 24,
-        background: C.white,
-        borderRadius: 12,
-        padding: '16px 24px',
-        boxShadow: C.cardShadow,
-        border: `1px solid ${C.border}`,
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+        marginBottom: 28,
       }}>
         <div>
-          <h2 style={{ fontSize: 20, fontWeight: 700, color: C.navy, margin: 0 }}>
+          <h2 style={{ fontSize: 26, fontWeight: 700, color: C.navy, margin: 0, letterSpacing: '-0.5px' }}>
             {dept.name}
           </h2>
-          <p style={{ fontSize: 13, color: C.gray500, marginTop: 4, margin: '4px 0 0' }}>
-            그룹 <strong style={{ color: C.blue }}>{dept.groups.length}</strong>개
+          <p style={{ fontSize: 13, color: C.gray500, margin: '6px 0 0' }}>
+            프로세스 그룹 {dept.groups.length}개
           </p>
         </div>
-        <button onClick={() => onDeleteDept(dept)} style={deleteBtnStyle} title="부서 삭제">
-          🗑 부서 삭제
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={onAddGroup} style={addBtnStyle}>
+            + 그룹 추가
+          </button>
+        </div>
       </div>
 
-      {/* 그룹 카드 목록 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
+      {/* 그룹 카드 목록 — 세로 리스트 */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {dept.groups.map((group) => (
           <div
             key={group.id}
             style={{
               background: C.white,
               border: `1px solid ${C.border}`,
-              borderLeft: `4px solid ${C.blue}`,
               borderRadius: 10,
-              padding: '20px 20px 16px',
+              padding: '18px 22px',
               cursor: 'pointer',
               boxShadow: C.cardShadow,
-              transition: 'box-shadow 0.15s, transform 0.15s',
-              position: 'relative',
+              transition: 'box-shadow 0.15s',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
             }}
-            onMouseEnter={e => {
-              e.currentTarget.style.boxShadow = C.cardShadowHover
-              e.currentTarget.style.transform = 'translateY(-1px)'
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.boxShadow = C.cardShadow
-              e.currentTarget.style.transform = 'translateY(0)'
-            }}
+            onClick={() => onSelectGroup(group)}
+            onMouseEnter={e => { e.currentTarget.style.boxShadow = C.cardShadowHover }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = C.cardShadow }}
           >
-            {/* 수정/삭제 버튼 — 우상단 */}
-            <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: 2 }}>
+            {/* 왼쪽: 이름 + 세부 프로세스 수 */}
+            <div>
+              <div style={{ fontWeight: 600, fontSize: 15, color: C.navy, marginBottom: 4 }}>
+                {group.name}
+              </div>
+              <div style={{ fontSize: 12, color: C.gray500 }}>
+                세부 프로세스 {group.processes.length}개
+              </div>
+            </div>
+
+            {/* 오른쪽: 삭제 아이콘 + 화살표 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <button
                 onClick={(e) => { e.stopPropagation(); onEditGroup(group) }}
                 style={actionBtnStyle}
                 title="그룹 수정"
-              >✏</button>
+              >✏️</button>
               <button
                 onClick={(e) => { e.stopPropagation(); onDeleteGroup(group) }}
-                style={{ ...actionBtnStyle, color: C.gray300 }}
+                style={deleteIconStyle}
                 title="그룹 삭제"
               >🗑</button>
-            </div>
-
-            {/* 카드 본문 */}
-            <div onClick={() => onSelectGroup(group)}>
-              <div style={{ fontWeight: 700, fontSize: 15, color: C.gray700, marginBottom: 12, paddingRight: 52 }}>
-                {group.name}
-              </div>
-              {/* 프로세스 수 뱃지 */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 4,
-                  background: C.bluePale, color: C.blue,
-                  border: `1px solid ${C.blueLight}`,
-                  fontSize: 12, fontWeight: 600,
-                  padding: '3px 10px', borderRadius: 20,
-                }}>
-                  📋 프로세스 {group.processes.length}개
-                </span>
-              </div>
+              <span style={{ fontSize: 18, color: C.gray300, marginLeft: 4 }}>›</span>
             </div>
           </div>
         ))}
@@ -110,13 +95,11 @@ export default function LV1View({ dept, onSelectGroup, onAddGroup, onDeleteDept,
           style={{
             border: `2px dashed ${C.gray300}`,
             borderRadius: 10,
-            padding: '20px',
+            padding: '18px',
             cursor: 'pointer',
             display: 'flex',
-            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            minHeight: 100,
             color: C.gray500,
             fontSize: 13,
             fontWeight: 500,
@@ -132,24 +115,31 @@ export default function LV1View({ dept, onSelectGroup, onAddGroup, onDeleteDept,
             e.currentTarget.style.color = C.gray500
           }}
         >
-          <span style={{ fontSize: 22 }}>＋</span>
-          <span>그룹 추가</span>
+          + 그룹 추가
         </div>
       </div>
     </div>
   )
 }
 
-const deleteBtnStyle = {
-  padding: '8px 16px', fontSize: 13, fontWeight: 600,
-  background: C.redLight, color: C.red, border: `1px solid ${C.redBorder}`,
+const addBtnStyle = {
+  padding: '9px 20px', fontSize: 13, fontWeight: 600,
+  background: C.navy, color: C.white, border: 'none',
   borderRadius: 8, cursor: 'pointer', whiteSpace: 'nowrap',
-  display: 'flex', alignItems: 'center', gap: 4,
 }
 
 const actionBtnStyle = {
-  background: 'none', border: 'none', cursor: 'pointer',
+  background: C.white, border: `1px solid ${C.border}`, cursor: 'pointer',
   fontSize: 14, color: C.gray500,
-  padding: '4px 6px', borderRadius: 4,
+  width: 30, height: 30, borderRadius: 6,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
   lineHeight: 1,
+}
+
+const deleteIconStyle = {
+  background: C.redLight, border: 'none', cursor: 'pointer',
+  fontSize: 13, color: C.red,
+  width: 28, height: 28, borderRadius: '50%',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  lineHeight: 1, flexShrink: 0,
 }

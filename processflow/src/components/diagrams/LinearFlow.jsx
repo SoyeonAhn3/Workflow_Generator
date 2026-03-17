@@ -29,8 +29,8 @@ export default function LinearFlow({ steps }) {
             position: 'relative',
             border: `2px solid ${C.blue}`,
             borderRadius: 8,
-            padding: '14px 16px 12px',
-            width: 130,
+            padding: '12px 14px 10px',
+            width: 150,
             background: C.white,
           }}>
             {/* 번호 뱃지 (우상단) */}
@@ -44,27 +44,27 @@ export default function LinearFlow({ steps }) {
               {idx + 1}
             </div>
 
+            {/* 화면명 */}
+            {step.screenName && (
+              <div style={{ fontSize: 10, color: C.blue, fontWeight: 600, marginBottom: 4 }}>
+                {step.screenName}
+              </div>
+            )}
+
             {/* 단계명 */}
             <div style={{
-              fontSize: 11, fontWeight: 700, color: C.gray700,
-              marginBottom: 6, lineHeight: 1.4,
+              fontSize: 11, fontWeight: 600, color: C.gray700,
+              marginBottom: 4, lineHeight: 1.45,
               overflow: 'hidden', textOverflow: 'ellipsis',
               display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
             }}>
               {step.title}
             </div>
 
-            {/* 화면명 */}
-            {step.screenName && (
-              <div style={{ fontSize: 9, color: C.blue, fontWeight: 600, marginBottom: 2 }}>
-                {step.screenName}
-              </div>
-            )}
-
             {/* PT */}
             {step.pt && (
               <div style={{ fontSize: 10, color: C.gray500 }}>
-                {step.pt}
+                PT: {step.pt}
               </div>
             )}
           </div>

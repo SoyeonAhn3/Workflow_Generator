@@ -8,34 +8,37 @@ export const C = {
   blueLight: "#D6E4F0",
   bluePale:  "#EBF3FB",
   gray700:   "#404040",
-  gray500:   "#595959",
+  gray500:   "#666666",
   gray300:   "#BFBFBF",
-  gray100:   "#F2F2F2",
+  gray100:   "#F5F7FA",
   white:     "#FFFFFF",
   border:    "#E2E8F0",
-  red:       "#EF4444",
-  redLight:  "#FEF2F2",
-  redBorder: "#FECACA",
+  red:       "#E8545F",
+  redLight:  "#FEF0F1",
+  redBorder: "#F5C6C9",
 
   // 페이지 배경
   pageBg:    "#F0F4F8",
 
-  // 사이드바 (다크 테마)
-  sidebarBg:       "#1A3A5C",
-  sidebarBorder:   "#0F2540",
-  sidebarText:     "#C5D8EC",
-  sidebarSubText:  "#8FB5D4",
-  sidebarActiveBg: "rgba(46,117,182,0.35)",
-  sidebarHover:    "rgba(255,255,255,0.06)",
+  // 사이드바
+  sidebarBg:       "#FFFFFF",
+  sidebarBorder:   "#E2E8F0",
+  sidebarText:     "#404040",
+  sidebarSubText:  "#888888",
+  sidebarActiveBg: "#EBF3FB",
+  sidebarHover:    "rgba(46,117,182,0.04)",
 
   // 카드 그림자
-  cardShadow: "0 1px 4px rgba(0,0,0,0.08)",
-  cardShadowHover: "0 4px 16px rgba(0,0,0,0.13)",
+  cardShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
+  cardShadowHover: "0 4px 12px rgba(0,0,0,0.1)",
 
   // warning (주의사항)
   warning:       "#b45309",
   warningBg:     "#fffbeb",
   warningBorder: "#fde68a",
+
+  // 추가 색상
+  bgVeryLight:   "#F7FAFD",
 }
 
 // 부서별 아이콘 배경색 순환 팔레트

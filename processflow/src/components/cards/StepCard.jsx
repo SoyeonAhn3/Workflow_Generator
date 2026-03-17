@@ -38,11 +38,17 @@ export default function StepCard({ step, index, onEdit, onDelete }) {
 
   const hasWarning = !!step.warning
 
+  // 메타 정보 조합
+  const metaParts = [
+    step.screenName && `화면: ${step.screenName}`,
+    step.dept,
+    step.pt && `PT: ${step.pt}`,
+  ].filter(Boolean)
+
   return (
     <div style={{
       background: C.white,
       border: `1px solid ${C.border}`,
-      borderLeft: `4px solid ${hasWarning ? '#f59e0b' : C.blue}`,
       borderRadius: 10,
       overflow: 'hidden',
       boxShadow: C.cardShadow,
@@ -51,15 +57,15 @@ export default function StepCard({ step, index, onEdit, onDelete }) {
       {/* ── 헤더 (항상 표시) ── */}
       <div
         style={{
-          display: 'flex', alignItems: 'center', gap: 12,
-          padding: '14px 16px', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 14,
+          padding: '14px 18px', cursor: 'pointer',
         }}
         onClick={() => setExpanded((v) => !v)}
       >
-        {/* 번호 뱃지 */}
+        {/* 번호 뱃지 — 둥근 사각형 */}
         <div style={{
           width: 32, height: 32, minWidth: 32, borderRadius: 8,
-          background: hasWarning ? '#f59e0b' : C.blue,
+          background: hasWarning ? C.warning : C.blue,
           color: C.white,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 14, fontWeight: 700, flexShrink: 0,
@@ -67,39 +73,31 @@ export default function StepCard({ step, index, onEdit, onDelete }) {
           {index + 1}
         </div>
 
-        {/* 단계명 + 메타 뱃지 */}
+        {/* 단계명 + 메타 텍스트 */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, fontSize: 14, color: C.gray700, marginBottom: 6 }}>
+          <div style={{ fontWeight: 600, fontSize: 14, color: C.gray700, marginBottom: 2 }}>
             {step.title}
             {hasWarning && (
               <span style={{
-                marginLeft: 8, fontSize: 11, color: '#b45309',
-                background: '#fffbeb', border: '1px solid #fde68a',
+                marginLeft: 8, fontSize: 10, color: C.warning,
+                background: C.warningBg, border: `1px solid ${C.warningBorder}`,
                 padding: '1px 7px', borderRadius: 10, fontWeight: 500,
               }}>
                 ⚠ 주의
               </span>
             )}
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {step.screenName && (
-              <span style={screenBadgeStyle}>{step.screenName}</span>
-            )}
-            {step.dept && (
-              <span style={metaBadgeStyle}>🏢 {step.dept}</span>
-            )}
-            {step.pt && (
-              <span style={{ ...metaBadgeStyle, background: '#F0F4F8', color: C.gray500 }}>
-                ⏱ {step.pt}
-              </span>
-            )}
-          </div>
+          {metaParts.length > 0 && (
+            <div style={{ fontSize: 12, color: C.gray500 }}>
+              {metaParts.join(' · ')}
+            </div>
+          )}
         </div>
 
         {/* 액션 버튼 */}
-        <div style={{ display: 'flex', gap: 4, flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
-          <button onClick={onEdit} style={iconBtnStyle} title="수정">✏</button>
-          <button onClick={handleDelete} style={{ ...iconBtnStyle, color: C.gray300 }} title="삭제">🗑</button>
+        <div style={{ display: 'flex', gap: 6, flexShrink: 0, alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+          <button onClick={onEdit} style={editIconStyle} title="수정">✏️</button>
+          <button onClick={handleDelete} style={deleteIconStyle} title="삭제">🗑</button>
         </div>
 
         {/* 펼치기 */}
@@ -129,29 +127,11 @@ export default function StepCard({ step, index, onEdit, onDelete }) {
             <InfoCell label="소요 시간" value={step.pt || '—'} noBorderRight={true} />
           </div>
 
-          {/* Logic */}
-          {step.logic && (
-            <div style={{ padding: '14px 18px', borderBottom: `1px solid ${C.border}` }}>
-              <div style={sectionLabelStyle}>Logic</div>
-              <div style={{
-                fontSize: 13, color: C.gray700,
-                background: '#F7FAFD',
-                border: `1px solid #D8E8F6`,
-                borderRadius: 6,
-                padding: '10px 14px',
-                whiteSpace: 'pre-line',
-                lineHeight: 1.75,
-              }}>
-                {step.logic}
-              </div>
-            </div>
-          )}
-
-          {/* 이미지 */}
+          {/* 이미지 (Logic 위에 배치) */}
           {step.images?.length > 0 && (
             <div style={{ padding: '14px 18px', borderBottom: `1px solid ${C.border}` }}>
               <div style={sectionLabelStyle}>첨부 이미지</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                 {step.images.map((img) => (
                   <div key={img.id} style={{
                     borderRadius: 8, overflow: 'hidden',
@@ -162,11 +142,11 @@ export default function StepCard({ step, index, onEdit, onDelete }) {
                       <img
                         src={imageUrls[img.id]}
                         alt={img.name}
-                        style={{ width: 200, height: 140, objectFit: 'cover', display: 'block' }}
+                        style={{ maxWidth: '100%', width: 700, height: 'auto', display: 'block' }}
                       />
                     ) : (
                       <div style={{
-                        width: 200, height: 140,
+                        width: 700, height: 350,
                         background: C.gray100,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 12, color: C.gray300,
@@ -174,6 +154,24 @@ export default function StepCard({ step, index, onEdit, onDelete }) {
                     )}
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Logic */}
+          {step.logic && (
+            <div style={{ padding: '14px 18px', borderBottom: `1px solid ${C.border}` }}>
+              <div style={sectionLabelStyle}>Logic</div>
+              <div style={{
+                fontSize: 13, color: C.gray700,
+                background: C.bgVeryLight,
+                border: `1px solid ${C.blueLight}`,
+                borderRadius: 6,
+                padding: '10px 14px',
+                whiteSpace: 'pre-line',
+                lineHeight: 1.75,
+              }}>
+                {step.logic}
               </div>
             </div>
           )}
@@ -221,7 +219,7 @@ function InfoCell({ label, value, noBorderRight }) {
       padding: '10px 16px',
       borderRight: noBorderRight ? 'none' : `1px solid ${C.border}`,
     }}>
-      <div style={{ fontSize: 10, fontWeight: 700, color: C.gray300, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
+      <div style={{ fontSize: 10, fontWeight: 600, color: C.gray500, letterSpacing: '0.3px', marginBottom: 4 }}>
         {label}
       </div>
       <div style={{ fontSize: 13, fontWeight: 600, color: C.gray700 }}>
@@ -231,30 +229,23 @@ function InfoCell({ label, value, noBorderRight }) {
   )
 }
 
-const screenBadgeStyle = {
-  display: 'inline-flex', alignItems: 'center',
-  background: C.navy, color: C.white,
-  fontSize: 11, fontWeight: 700,
-  padding: '2px 8px', borderRadius: 6,
-  letterSpacing: '0.3px',
+const editIconStyle = {
+  background: C.white, border: `1px solid ${C.border}`, cursor: 'pointer',
+  fontSize: 14, color: C.gray500,
+  width: 30, height: 30, borderRadius: 6,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
 }
 
-const metaBadgeStyle = {
-  display: 'inline-flex', alignItems: 'center',
-  background: C.gray100, color: C.gray500,
-  border: `1px solid ${C.border}`,
-  fontSize: 11, fontWeight: 500,
-  padding: '2px 8px', borderRadius: 12,
+const deleteIconStyle = {
+  background: C.redLight, border: 'none', cursor: 'pointer',
+  fontSize: 12, color: C.red,
+  width: 30, height: 30, borderRadius: 6,
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  lineHeight: 1, flexShrink: 0,
 }
 
 const sectionLabelStyle = {
   fontSize: 11, fontWeight: 700, color: C.gray500,
   textTransform: 'uppercase', letterSpacing: '0.5px',
   marginBottom: 8,
-}
-
-const iconBtnStyle = {
-  background: 'none', border: 'none', cursor: 'pointer',
-  fontSize: 15, color: C.gray500,
-  padding: '5px 7px', borderRadius: 6,
 }

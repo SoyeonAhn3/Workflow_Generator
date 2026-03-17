@@ -108,7 +108,7 @@ export default function App() {
     setSelProc(proc)
   }
 
-  const sidebarWidth = sidebarOpen ? 250 : 48
+  const sidebarWidth = sidebarOpen ? 220 : 48
 
   // ══════════════════════════════════════════════════════════
   // ── 추가 핸들러 ──────────────────────────────────────────
@@ -406,10 +406,10 @@ export default function App() {
 
       {/* Main Content */}
       <div style={{
-        marginTop: 52,
+        marginTop: 48,
         marginLeft: sidebarWidth,
-        padding: '28px 32px',
-        minHeight: 'calc(100vh - 52px)',
+        padding: '28px 36px',
+        minHeight: 'calc(100vh - 48px)',
         background: C.pageBg,
         transition: 'margin-left 0.25s ease',
       }}>
@@ -512,6 +512,7 @@ export default function App() {
       {editProcModal && (
         <EditProcModal
           proc={editProcModal}
+          allDepts={data}
           onSave={handleEditProcSave}
           onClose={() => setEditProcModal(null)}
         />

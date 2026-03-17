@@ -5,19 +5,35 @@ import { C } from '../../constants'
  * EditProcModal — 프로세스 정보 수정 (이름/부서/담당자/모듈/설명)
  * @param {{
  *   proc: object,
+ *   allDepts: Array,
  *   onSave: (updated: object) => void,
  *   onClose: () => void,
  * }} props
  */
-export default function EditProcModal({ proc, onSave, onClose }) {
+export default function EditProcModal({ proc, allDepts = [], onSave, onClose }) {
   const [name,        setName]        = useState(proc.name || '')
   const [dept,        setDept]        = useState(proc.dept || '')
   const [owner,       setOwner]       = useState(proc.owner || '')
   const [module,      setModule]      = useState(proc.module || '')
   const [description, setDescription] = useState(proc.description || '')
+  const [deptError,   setDeptError]   = useState('')
+
+  const deptNames = allDepts.map((d) => d.name)
+
+  const handleDeptChange = (val) => {
+    setDept(val)
+    if (val.trim() && !deptNames.includes(val.trim())) {
+      setDeptError(`"${val.trim()}" 부서가 존재하지 않습니다`)
+    } else {
+      setDeptError('')
+    }
+  }
 
   const handleSubmit = () => {
     if (!name.trim()) return alert('프로세스명을 입력하세요')
+    if (dept.trim() && !deptNames.includes(dept.trim())) {
+      return alert(`"${dept.trim()}" 부서가 존재하지 않습니다.\n등록된 부서: ${deptNames.join(', ')}`)
+    }
     onSave({ ...proc, name: name.trim(), dept: dept.trim(), owner: owner.trim(), module: module.trim(), description: description.trim() })
   }
 
@@ -34,7 +50,17 @@ export default function EditProcModal({ proc, onSave, onClose }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
           <div>
             <label style={labelStyle}>담당 부서</label>
-            <input style={inputStyle} value={dept} onChange={(e) => setDept(e.target.value)} placeholder="예: CO팀" />
+            <input
+              style={{ ...inputStyle, borderColor: deptError ? C.red : C.border }}
+              value={dept}
+              onChange={(e) => handleDeptChange(e.target.value)}
+              placeholder="예: CO팀"
+            />
+            {deptError && (
+              <div style={{ fontSize: 11, color: C.red, marginTop: 4 }}>
+                {deptError}
+              </div>
+            )}
           </div>
           <div>
             <label style={labelStyle}>담당자</label>

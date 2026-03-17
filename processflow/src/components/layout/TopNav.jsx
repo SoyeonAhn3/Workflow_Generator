@@ -9,16 +9,16 @@ export default function TopNav({ storageSizeKB, storageOk, sidebarOpen, onToggle
     <div style={{
       background: C.navy,
       color: C.white,
-      height: 52,
+      height: 48,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 16px 0 0',
+      padding: '0 20px 0 0',
       position: 'fixed',
       top: 0, left: 0, right: 0,
       zIndex: 100,
     }}>
-      {/* 왼쪽: 사이드바 토글 + 로고 */}
+      {/* 왼쪽: 로고 + 부제 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
         <button
           onClick={onToggleSidebar}
@@ -27,34 +27,39 @@ export default function TopNav({ storageSizeKB, storageOk, sidebarOpen, onToggle
             background: 'none',
             border: 'none',
             color: C.white,
-            width: 52,
-            height: 52,
+            width: 48,
+            height: 48,
             cursor: 'pointer',
-            fontSize: 18,
+            fontSize: 16,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            opacity: 0.85,
           }}
         >
           ☰
         </button>
-        <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '-0.3px' }}>
-          ⚡ ProcessFlow
+        <span style={{ fontWeight: 700, fontSize: 16, letterSpacing: '-0.3px' }}>
+          ProcessFlow
+        </span>
+        <span style={{ fontSize: 12, opacity: 0.7, marginLeft: 10, fontWeight: 400 }}>
+          업무 프로세스 관리 플랫폼
         </span>
       </div>
 
       {/* 오른쪽: 저장 상태 뱃지 */}
       <span style={{
-        fontSize: 12,
-        background: storageOk ? '#16a34a' : C.red,
+        fontSize: 11,
+        background: storageOk ? 'rgba(255,255,255,0.15)' : 'rgba(239,68,68,0.8)',
         color: C.white,
-        padding: '3px 10px',
-        borderRadius: 12,
+        padding: '4px 12px',
+        borderRadius: 14,
         fontWeight: 500,
+        border: '1px solid rgba(255,255,255,0.2)',
       }}>
         {storageOk
-          ? `💾 저장됨 · ${storageSizeKB}KB`
-          : '⚠️ 저장 실패'
+          ? `저장됨 · ${storageSizeKB}KB`
+          : '저장 실패'
         }
       </span>
     </div>
