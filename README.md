@@ -1,8 +1,10 @@
 # ⚡ ProcessFlow
 
 > 업무 프로세스를 입력하면 자동으로 프로세스를 시각화하고 단계별 Word 매뉴얼을 생성해주는 웹 플랫폼
-> 웹사이트 링크 : https://processflow-generator.netlify.app/
-> <img width="917" height="598" alt="image" src="https://github.com/user-attachments/assets/0e612ea2-6308-480e-bbb8-98aee205eb6e" />
+
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-processflow--generator.netlify.app-brightgreen?style=for-the-badge)](https://processflow-generator.netlify.app/)
+
+<img width="917" height="598" alt="image" src="https://github.com/user-attachments/assets/0e612ea2-6308-480e-bbb8-98aee205eb6e" />
 
 ---
 
