@@ -13,6 +13,7 @@
 | 대상 | SAP 기반 업무 팀 (CO, FI, MM 등) |
 | 예상 사용자 | 최대 20명 (동시 접속 ~3명) |
 | 배포 환경 | Netlify (외부 접근 가능) |
+| 배포 URL | https://processflow-generator.netlify.app |
 | 저장 방식 | LocalStorage (텍스트) + IndexedDB (이미지) |
 | 백엔드 | 없음 — Netlify Functions만 사용 (AI API 프록시) |
 
@@ -176,7 +177,7 @@ processflow/
 │   ├── Phase4_다이어그램.md          # ✅ 완료
 │   ├── Phase5_Word내보내기.md        # ✅ 완료
 │   ├── Phase6_AI자동구조화.md        # ✅ 완료
-│   └── Phase7_통합테스트_배포.md     # 🔲 미시작
+│   └── Phase7_통합테스트_배포.md     # ✅ 완료
 ├── Pre-Requirement/
 │   └── ProcessFlow_개발명세서.txt    # v1.3
 ├── netlify.toml             # Netlify 빌드 설정
@@ -197,7 +198,7 @@ processflow/
 | **Phase 4** | 다이어그램 (LinearFlow + 부서별 Work flow) | ✅ 완료 |
 | **Phase 5** | Word 내보내기 (docx 생성 + 이미지 삽입) | ✅ 완료 |
 | **Phase 6** | AI 자동 구조화 (Netlify Functions + 위저드) + 그룹/프로세스 수정 | ✅ 완료 |
-| **Phase 7** | 통합 테스트 + Netlify 배포 | 🔲 미시작 |
+| **Phase 7** | 통합 테스트 + Netlify 배포 | ✅ 완료 |
 
 > 상세 내용은 [`Phase/`](./Phase/) 디렉토리 참고
 
@@ -253,6 +254,7 @@ netlify dev
 
 | 날짜 | 버전 | 내용 |
 |------|------|------|
+| 2026-03-18 | v2.1 | Phase 7 완료 — Netlify 배포 (processflow-generator.netlify.app), Word 템플릿 v7 기준 전면 재작성, 사용자 테스트 완료 |
 | 2026-03-16 | v2.0 | UI 전체 개선 — 카드 좌측 강조선 + 박스 그림자, LV2 프로세스 카드 태그/순번 뱃지, LV3 헤더 카드화, StepCard 정보 3칸 그리드 + 섹션 구분, 주의사항 단계 노란 강조 |
 | 2026-03-16 | v1.9 | Phase 6 완료 — AI 자동 구조화 (AddMethodModal, AIGenerateModal, claude.js), 그룹/프로세스 수정 모달, LV1~LV3 수정 버튼, selDept/selGroup/selProc 동기화 버그 수정 |
 | 2026-03-16 | v1.8 | Phase 5 완료 — wordExport.js + ExportModal.jsx, Word 파일 생성 + 이미지 삽입. ExportModal 문서 구성 파트 제거 |
