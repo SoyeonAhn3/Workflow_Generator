@@ -16,6 +16,7 @@ export default function StepModal({ mode, step, onSave, onClose }) {
   const [screenName, setScreenName] = useState('')
   const [dept, setDept] = useState('')
   const [pt, setPt] = useState('')
+  const [colIndex, setColIndex] = useState('')   // 병렬 열 위치 (비우면 마지막 열 자동 배정)
   const [logic, setLogic] = useState('')
   const [warning, setWarning] = useState('')
   const [images, setImages] = useState([])       // { id, name, previewUrl? }
@@ -28,6 +29,7 @@ export default function StepModal({ mode, step, onSave, onClose }) {
       setScreenName(step.screenName || '')
       setDept(step.dept || '')
       setPt(step.pt || '')
+      setColIndex(step.colIndex !== undefined ? String(step.colIndex) : '')
       setLogic(step.logic || '')
       setWarning(step.warning || '')
       setImages(step.images || [])
@@ -74,12 +76,14 @@ export default function StepModal({ mode, step, onSave, onClose }) {
   const handleSubmit = () => {
     const trimTitle = title.trim()
     if (!trimTitle) return alert('단계명을 입력하세요')
+    const parsed = parseInt(colIndex, 10)
     onSave({
       id: mode === 'edit' ? step.id : 'step_' + Date.now(),
       title: trimTitle,
       screenName: screenName.trim(),
       dept: dept.trim(),
       pt: pt.trim(),
+      ...(colIndex !== '' && !isNaN(parsed) ? { colIndex: parsed } : {}),
       logic: logic.trim(),
       warning: warning.trim(),
       images,
@@ -100,8 +104,8 @@ export default function StepModal({ mode, step, onSave, onClose }) {
             placeholder="예: 물류 미결 현황 조회" />
         </div>
 
-        {/* 화면명 / 담당 / PT */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 14 }}>
+        {/* 화면명 / 담당 / PT / Step */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 0.8fr', gap: 10, marginBottom: 14 }}>
           <div>
             <label style={labelStyle}>화면명 (T-Code/프로그램)</label>
             <input style={inputStyle} value={screenName} onChange={(e) => setScreenName(e.target.value)}
@@ -116,6 +120,17 @@ export default function StepModal({ mode, step, onSave, onClose }) {
             <label style={labelStyle}>PT</label>
             <input style={inputStyle} value={pt} onChange={(e) => setPt(e.target.value)}
               placeholder="예: 30min" />
+          </div>
+          <div>
+            <label style={labelStyle}>Step</label>
+            <input
+              style={inputStyle}
+              type="number"
+              min="0"
+              value={colIndex}
+              onChange={(e) => setColIndex(e.target.value)}
+              placeholder="자동"
+            />
           </div>
         </div>
 

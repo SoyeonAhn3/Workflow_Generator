@@ -98,7 +98,7 @@ const isLaneChange = (steps, i) =>
 | 항목 | 결정 | 이유 |
 |------|------|------|
 | 외부 차트 라이브러리 | 미사용 (SVG 직접) | 명세서 규칙, 번들 크기 절약 |
-| 분기/반려 표현 | v2 미구현 | 명세서 Section 7.2, 10 기준 |
+| 분기/반려 표현 | Phase 8에서 구현 예정 | 명세서 Section 7.2, 10 기준 |
 | 레인 순서 기준 | steps 등장 순서 | 자연스러운 흐름 반영 |
 | 가로 스크롤 | overflowX: auto | 단계 수 많아도 레이아웃 유지 |
 
@@ -128,3 +128,4 @@ const isLaneChange = (steps, i) =>
 |------|------|
 | 2026-03-12 | 최초 작성 |
 | 2026-03-16 | Phase 4 완료 — LinearFlow/SwimLane 구현, LV3View/LV2View 연결. UI 레이블 "SwimLane" → "부서별 Work flow" 변경. LV3 단계 수정 후 뒤로가기 시 selGroup.processes 미갱신 버그 수정 (TC-011). 전체 TC-001~011 Pass |
+| 2026-03-19 | Phase 8에서 분기·합류 구현 예정으로 설계 결정 항목 업데이트 |

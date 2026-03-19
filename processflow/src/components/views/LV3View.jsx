@@ -6,6 +6,15 @@ import LinearFlow from '../diagrams/LinearFlow'
  * LV3View — 프로세스 상세 (단계 목록)
  */
 export default function LV3View({ dept, group, proc, onDeleteProc, onEditProc, onAddStep, onEditStep, onDeleteStep, onBack }) {
+  // steps를 colIndex 기준으로 정렬 (같은 colIndex면 배열 순서 유지)
+  const sortedSteps = [...(proc?.steps ?? [])].map((s, i) => ({ ...s, _origIdx: i }))
+  sortedSteps.sort((a, b) => {
+    const aCol = a.colIndex ?? (a._origIdx + 1) * 1000  // colIndex 없으면 맨 뒤
+    const bCol = b.colIndex ?? (b._origIdx + 1) * 1000
+    if (aCol !== bCol) return aCol - bCol
+    return a._origIdx - b._origIdx  // 같은 colIndex면 원본 순서 유지
+  })
+
   if (!proc) {
     return (
       <div style={{
@@ -92,7 +101,7 @@ export default function LV3View({ dept, group, proc, onDeleteProc, onEditProc, o
         <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 14 }}>
           전체 흐름도
         </div>
-        <LinearFlow steps={proc.steps ?? []} />
+        <LinearFlow steps={sortedSteps} />
       </div>
 
       {/* 단계별 상세 */}
@@ -102,7 +111,7 @@ export default function LV3View({ dept, group, proc, onDeleteProc, onEditProc, o
 
       {/* 단계 목록 */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {(proc.steps ?? []).map((step, idx) => (
+        {sortedSteps.map((step, idx) => (
           <StepCard
             key={step.id}
             step={step}

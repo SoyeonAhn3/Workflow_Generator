@@ -197,6 +197,73 @@ Netlify 배포 URL에서 T01~T07 모두 재실행
 
 ---
 
+## v1.5 추가 개발 — 단계 드래그 순서 변경
+
+### 개요
+
+Step(단계) 목록의 순서를 드래그 앤 드롭으로 변경하는 기능.
+현재는 삭제 후 재생성해야 순서 변경이 가능하므로 UX 개선 목적.
+
+### 기술 선택
+
+| 항목 | 선택 | 이유 |
+|------|------|------|
+| 라이브러리 | @dnd-kit (core + sortable + utilities) | React 전용, 19KB gzip, React 19 호환, react-beautiful-dnd 유지보수 중단으로 사실상 표준 |
+| 전략 | verticalListSortingStrategy | Step이 세로 리스트로 배치됨 |
+| 드래그 트리거 | PointerSensor (distance: 8px) | 클릭과 드래그 구분 — 기존 버튼 동작 보호 |
+| 드래그 핸들 | ⠿ 아이콘 (핸들 전용) | 카드 전체가 아닌 핸들에서만 드래그 시작 |
+
+### 설치 패키지
+
+```bash
+npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+```
+
+### 수정 대상 파일
+
+| # | 파일 | 변경 내용 |
+|---|------|-----------|
+| 1 | `package.json` | @dnd-kit 3개 패키지 추가 |
+| 2 | `App.jsx` | `handleReorderSteps(procId, oldIndex, newIndex)` 핸들러 추가 |
+| 3 | `LV3View.jsx` | DndContext + SortableContext로 Step 목록 감싸기, onDragEnd 처리 |
+| 4 | `StepCard.jsx` | useSortable 훅 적용, 드래그 핸들(⠿) 추가, 드래그 중 스타일 |
+
+### 동작 흐름
+
+```
+드래그 핸들(⠿) 클릭 + 8px 이동 → DndContext onDragStart
+  → 카드 반투명 + 다른 카드 위/아래 밀림 애니메이션
+  → 놓기 → onDragEnd → arrayMove로 steps 배열 순서 변경
+  → updateProc → localStorage 자동 저장
+```
+
+### 핵심 로직
+
+```js
+// App.jsx — arrayMove(@dnd-kit/sortable)로 배열 재정렬
+const handleReorderSteps = (procId, oldIndex, newIndex) => {
+  if (oldIndex === newIndex) return
+  const proc = findProc(procId)
+  const newSteps = arrayMove(proc.steps, oldIndex, newIndex)
+  updateProc(procId, { steps: newSteps })
+}
+
+// LV3View.jsx — DndContext > SortableContext > StepCard
+// StepCard.jsx — useSortable({ id: step.id }) + 드래그 핸들(⠿)
+```
+
+### 상태
+
+| # | 작업 | 상태 |
+|---|------|------|
+| 1 | @dnd-kit 패키지 설치 | 🔲 |
+| 2 | App.jsx 핸들러 추가 | 🔲 |
+| 3 | LV3View.jsx DndContext 적용 | 🔲 |
+| 4 | StepCard.jsx useSortable 적용 | 🔲 |
+| 5 | 테스트 및 배포 | 🔲 |
+
+---
+
 ## 변경 이력
 
 | 날짜 | 내용 |
@@ -205,3 +272,4 @@ Netlify 배포 URL에서 T01~T07 모두 재실행
 | 2026-03-18 | Netlify 배포 완료 (processflow-generator.netlify.app) |
 | 2026-03-18 | Word 템플릿 v7 기준 전면 재작성 (wordExport.js) |
 | 2026-03-18 | 사용자 테스트 완료, 전체 항목 ✅ 완료 처리 |
+| 2026-03-18 | v1.5 단계 드래그 순서 변경 구현 계획 추가 (@dnd-kit) |
