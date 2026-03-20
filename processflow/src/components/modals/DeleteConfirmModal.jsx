@@ -1,19 +1,20 @@
+import { useEffect } from 'react'
 import { C } from '../../constants'
+import { overlayStyle, modalStyle as modalStyleFn, btnSecondaryStyle, btnDangerStyle } from '../../styles/modalStyles'
 
 /**
  * DeleteConfirmModal — 삭제 확인 팝업
- * @param {{
- *   targetName: string,
- *   targetType: '부서'|'그룹'|'프로세스',
- *   childInfo?: string,
- *   onConfirm: () => void,
- *   onClose: () => void,
- * }} props
  */
 export default function DeleteConfirmModal({ targetName, targetType, childInfo, onConfirm, onClose }) {
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [onClose])
+
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div style={overlayStyle} role="dialog" aria-modal="true" onClick={onClose}>
+      <div style={modalStyleFn(400)} onClick={(e) => e.stopPropagation()}>
         {/* 아이콘 */}
         <div style={{
           width: 48, height: 48, borderRadius: '50%',
@@ -45,7 +46,6 @@ export default function DeleteConfirmModal({ targetName, targetType, childInfo, 
           이 작업은 되돌릴 수 없습니다.
         </p>
 
-        {/* 버튼 */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
           <button onClick={onClose} style={btnSecondaryStyle}>취소</button>
           <button onClick={onConfirm} style={btnDangerStyle}>삭제</button>
@@ -53,27 +53,4 @@ export default function DeleteConfirmModal({ targetName, targetType, childInfo, 
       </div>
     </div>
   )
-}
-
-const overlayStyle = {
-  position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-  background: 'rgba(0,0,0,0.4)', display: 'flex',
-  alignItems: 'center', justifyContent: 'center', zIndex: 200,
-}
-
-const modalStyle = {
-  background: C.white, borderRadius: 12, padding: '28px 32px',
-  width: 400, boxShadow: '0 8px 30px rgba(0,0,0,0.18)',
-}
-
-const btnDangerStyle = {
-  padding: '8px 20px', fontSize: 13, fontWeight: 600,
-  background: C.red, color: C.white, border: 'none',
-  borderRadius: 8, cursor: 'pointer',
-}
-
-const btnSecondaryStyle = {
-  padding: '8px 20px', fontSize: 13, fontWeight: 600,
-  background: C.gray100, color: C.gray500, border: 'none',
-  borderRadius: 8, cursor: 'pointer',
 }

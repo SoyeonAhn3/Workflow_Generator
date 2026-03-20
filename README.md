@@ -264,6 +264,7 @@ netlify dev
 
 | 날짜 | 버전 | 내용 |
 |------|------|------|
+| 2026-03-20 | v2.4 | 코드 품질 개선 — ModalBase 공통 컴포넌트 추출 (모달 8개 스타일 중복 제거), ErrorBoundary, 접근성(Escape 닫기, role="dialog"), Blob URL 메모리 누수 수정 |
 | 2026-03-20 | v2.3 | Phase 9 완료 — @dnd-kit 드래그 앤 드롭 단계 순서 변경, colIndex 1-based, 그룹 부서 검증, 병렬 스텝 동일 번호 |
 | 2026-03-20 | v2.2 | Phase 8 완료 — SwimLane 병렬 분기·합류 다이어그램, colIndex 기반 열 배치, SVG 오버레이 화살표, StepModal Step 필드 |
 | 2026-03-18 | v2.1 | Phase 7 완료 — Netlify 배포 (processflow-generator.netlify.app), Word 템플릿 v7 기준 전면 재작성, 사용자 테스트 완료 |

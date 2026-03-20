@@ -1,32 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { C } from '../../constants'
+import { overlayStyle, modalStyle as modalStyleFn, labelStyle, inputStyle, btnPrimaryStyle, btnSecondaryStyle } from '../../styles/modalStyles'
 
 /**
  * AIGenerateModal — AI 자동 구조화 3단계 위자드
- * Step 1: 입력 폼 (프로세스명, 부서, 담당자, 업무 흐름 설명)
- * Step 2: 로딩 (Claude API 호출 중)
- * Step 3: 결과 미리보기 (생성된 단계 목록)
- *
- * @param {{
- *   deptName: string,
- *   onComplete: (proc: object) => void,
- *   onClose: () => void,
- * }} props
  */
 export default function AIGenerateModal({ deptName, onComplete, onClose }) {
   const [wizardStep, setWizardStep] = useState(1)
-
-  // Step 1 입력 필드
   const [procName, setProcName] = useState('')
   const [dept, setDept] = useState(deptName || '')
   const [owner, setOwner] = useState('')
   const [description, setDescription] = useState('')
-
-  // Step 2~3 상태
   const [generatedSteps, setGeneratedSteps] = useState([])
   const [errorMsg, setErrorMsg] = useState(null)
 
-  // ── Step 1 → Step 2 → Step 3 ────────────────────────────
+  // Escape 키로 닫기
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [onClose])
+
   const handleGenerate = async () => {
     if (!procName.trim()) return alert('프로세스명을 입력하세요')
     if (!description.trim()) return alert('업무 흐름 설명을 입력하세요')
@@ -50,8 +44,6 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
       }
 
       const { steps } = await res.json()
-
-      // 각 step에 id 부여
       const stepsWithId = (steps || []).map((s, i) => ({
         id: 'step_' + Date.now() + '_' + i,
         title: s.title || '',
@@ -66,13 +58,11 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
       setGeneratedSteps(stepsWithId)
       setWizardStep(3)
     } catch (err) {
-      console.error('AI 생성 실패:', err)
       setErrorMsg(err.message || 'AI 생성에 실패했습니다. 다시 시도해 주세요.')
       setWizardStep(1)
     }
   }
 
-  // ── Step 3 → 완료 ──────────────────────────────────────
   const handleComplete = () => {
     const now = new Date()
     onComplete({
@@ -88,10 +78,10 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
   }
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
+    <div style={overlayStyle} role="dialog" aria-modal="true" onClick={onClose}>
+      <div style={modalStyleFn(540)} onClick={(e) => e.stopPropagation()}>
 
-        {/* ── Step 1: 입력 폼 ─────────────────────────────── */}
+        {/* Step 1: 입력 폼 */}
         {wizardStep === 1 && (
           <>
             <h3 style={titleStyle}>✨ AI 자동 생성</h3>
@@ -99,19 +89,14 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
               업무 흐름을 텍스트로 설명하면 AI가 단계를 자동 구성합니다
             </p>
 
-            {/* 에러 메시지 */}
-            {errorMsg && (
-              <div style={errorBoxStyle}>{errorMsg}</div>
-            )}
+            {errorMsg && <div style={errorBoxStyle}>{errorMsg}</div>}
 
-            {/* 프로세스명 */}
             <div style={{ marginBottom: 14 }}>
               <label style={labelStyle}>프로세스명 <span style={{ color: C.red }}>*</span></label>
               <input style={inputStyle} value={procName} onChange={(e) => setProcName(e.target.value)}
                 placeholder="예: 물류마감 Check 프로세스" autoFocus />
             </div>
 
-            {/* 담당 부서 / 담당자 */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
               <div>
                 <label style={labelStyle}>담당 부서</label>
@@ -125,7 +110,6 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
               </div>
             </div>
 
-            {/* 업무 흐름 설명 */}
             <div style={{ marginBottom: 20 }}>
               <label style={labelStyle}>업무 흐름 설명 <span style={{ color: C.red }}>*</span></label>
               <textarea
@@ -136,7 +120,6 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
               />
             </div>
 
-            {/* 버튼 */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
               <button onClick={onClose} style={btnSecondaryStyle}>취소</button>
               <button onClick={handleGenerate} style={btnPrimaryStyle}>
@@ -146,7 +129,7 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
           </>
         )}
 
-        {/* ── Step 2: 로딩 ────────────────────────────────── */}
+        {/* Step 2: 로딩 */}
         {wizardStep === 2 && (
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <div style={spinnerStyle} />
@@ -159,7 +142,7 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
           </div>
         )}
 
-        {/* ── Step 3: 결과 미리보기 ───────────────────────── */}
+        {/* Step 3: 결과 미리보기 */}
         {wizardStep === 3 && (
           <>
             <h3 style={titleStyle}>생성 결과 미리보기</h3>
@@ -167,7 +150,6 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
               {procName} — {generatedSteps.length}개 단계 생성됨
             </p>
 
-            {/* 단계 카드 목록 */}
             <div style={{ maxHeight: 360, overflowY: 'auto', marginBottom: 20 }}>
               {generatedSteps.map((step, i) => (
                 <div key={step.id} style={stepCardStyle}>
@@ -191,7 +173,6 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
               ))}
             </div>
 
-            {/* 버튼 */}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <button onClick={() => setWizardStep(1)} style={btnSecondaryStyle}>
                 ← 다시 입력
@@ -207,57 +188,19 @@ export default function AIGenerateModal({ deptName, onComplete, onClose }) {
   )
 }
 
-// ── 스타일 ─────────────────────────────────────────────────
-
-const overlayStyle = {
-  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
-  display: 'flex', alignItems: 'center', justifyContent: 'center',
-  zIndex: 9000,
-}
-
-const modalStyle = {
-  background: C.white, borderRadius: 12, padding: '24px 28px',
-  width: 540, maxHeight: '85vh', overflowY: 'auto',
-  boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-}
+// ── 이 모달 고유 스타일 (공통 스타일은 modalStyles.js에서 import) ──
 
 const titleStyle = {
   margin: '0 0 4px', fontSize: 16, fontWeight: 700, color: C.gray700,
 }
-
 const subtitleStyle = {
   margin: '0 0 20px', fontSize: 13, color: C.gray500,
 }
-
-const labelStyle = {
-  display: 'block', fontSize: 12, fontWeight: 600,
-  color: C.gray700, marginBottom: 6,
-}
-
-const inputStyle = {
-  width: '100%', padding: '8px 12px', fontSize: 13,
-  border: `1px solid ${C.border}`, borderRadius: 8,
-  outline: 'none', boxSizing: 'border-box', fontFamily: 'inherit',
-}
-
 const errorBoxStyle = {
   background: C.redLight, border: `1px solid ${C.redBorder}`,
   borderRadius: 8, padding: '10px 14px', marginBottom: 16,
   fontSize: 13, color: C.red,
 }
-
-const btnPrimaryStyle = {
-  padding: '8px 20px', fontSize: 13, fontWeight: 600,
-  background: C.blue, color: C.white, border: 'none',
-  borderRadius: 8, cursor: 'pointer',
-}
-
-const btnSecondaryStyle = {
-  padding: '8px 20px', fontSize: 13, fontWeight: 600,
-  background: C.gray100, color: C.gray500, border: 'none',
-  borderRadius: 8, cursor: 'pointer',
-}
-
 const spinnerStyle = {
   width: 40, height: 40, margin: '0 auto',
   border: `3px solid ${C.gray100}`,
@@ -265,13 +208,11 @@ const spinnerStyle = {
   borderRadius: '50%',
   animation: 'spin 1s linear infinite',
 }
-
 const stepCardStyle = {
   padding: '12px 14px', marginBottom: 8,
   border: `1px solid ${C.border}`, borderRadius: 8,
   background: C.white,
 }
-
 const stepBadgeStyle = {
   width: 22, height: 22, borderRadius: '50%',
   background: C.blue, color: C.white,

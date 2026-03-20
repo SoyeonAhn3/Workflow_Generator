@@ -27,6 +27,10 @@ Phase 8에서 colIndex 기반 병렬 분기·합류 다이어그램을 구현했
 | 7 | 그룹 추가 시 존재하지 않는 부서 검증 | ✅ |
 | 8 | 동일 colIndex 병렬 스텝 같은 번호 표시 (LV3 + SwimLane) | ✅ |
 | 9 | 수동 테스트 (TC-001~010 전체 Pass) | ✅ |
+| 10 | 모달 공통 컴포넌트 추출 (ModalBase.jsx + modalStyles.js) | ✅ |
+| 11 | ErrorBoundary 추가 (에러 시 흰 화면 방지) | ✅ |
+| 12 | 접근성 개선 (role="dialog", Escape 닫기, aria-modal) | ✅ |
+| 13 | Blob URL 메모리 누수 수정 (useRef 추적) | ✅ |
 
 ---
 
@@ -111,6 +115,10 @@ colIndices.forEach((col, i) => {
 | `src/App.jsx` | handleReorderSteps 핸들러, AddModal에 deptNames prop 전달 |
 | `src/components/modals/AddModal.jsx` | `deptNames` prop + 부서 존재 검증 |
 | `src/components/diagrams/SwimLane.jsx` | stepsKey에 colIndex 포함, stepNumberMap 병렬 번호 통일 |
+| `src/components/modals/ModalBase.jsx` | **신규** — 모달 공통 래퍼 (오버레이, 모달 박스, Escape 닫기, 접근성) |
+| `src/styles/modalStyles.js` | **신규** — 모달 공통 스타일 상수 (overlay, modal, label, input, btn) |
+| `src/components/ErrorBoundary.jsx` | **신규** — 에러 시 흰 화면 방지, 새로고침 안내 |
+| `src/components/modals/*.jsx` (8개) | ModalBase/modalStyles import로 스타일 중복 제거 |
 
 ---
 
@@ -123,6 +131,10 @@ colIndices.forEach((col, i) => {
 | 병렬 재설정 | StepModal에서 수동 입력 | 병렬 배치는 의미적 결정이므로 명시적으로 |
 | 드래그 핸들 | ⠿ 아이콘에만 적용 | 카드 내 버튼(수정/삭제/펼치기)과 충돌 방지 |
 | PointerSensor distance | 5px | 클릭과 드래그를 명확히 구분 |
+| 모달 공통화 | ModalBase.jsx + modalStyles.js 추출 | 8개 모달 스타일 48곳 중복 제거, 디자인 변경 시 1곳만 수정 |
+| ErrorBoundary | class component 사용 | getDerivedStateFromError는 class만 지원 (React 제약) |
+| Blob URL 추적 | useRef(Set) 사용 | useEffect 빈 의존성의 closure 문제 해결, 언마운트 시 확실한 cleanup |
+| 접근성 | ModalBase에 내장 | role="dialog", aria-modal, Escape 닫기를 한번 구현으로 8개 모달에 자동 적용 |
 
 ---
 
@@ -134,3 +146,7 @@ colIndices.forEach((col, i) => {
 | 2026-03-20 | @dnd-kit 설치 + LV3View 드래그 앤 드롭 구현 |
 | 2026-03-20 | colIndex 1-based 전환, 그룹 부서 검증, 병렬 번호 통일 |
 | 2026-03-20 | 수동 테스트 TC-001~010 전체 Pass, Phase 9 완료 |
+| 2026-03-20 | 코드 품질 개선 — ModalBase.jsx + modalStyles.js 추출 (모달 8개 스타일 중복 제거) |
+| 2026-03-20 | ErrorBoundary 추가 (에러 시 흰 화면 방지) |
+| 2026-03-20 | 접근성 개선 (role="dialog", aria-modal, Escape 닫기) |
+| 2026-03-20 | Blob URL 메모리 누수 수정 (StepModal, StepCard — useRef 추적) |

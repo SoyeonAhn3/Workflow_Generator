@@ -15,6 +15,7 @@ import AddMethodModal from './components/modals/AddMethodModal.jsx'
 import AIGenerateModal from './components/modals/AIGenerateModal.jsx'
 import EditProcModal from './components/modals/EditProcModal.jsx'
 import EditGroupModal from './components/modals/EditGroupModal.jsx'
+import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 export default function App() {
   // ── 데이터 ──────────────────────────────────────────────
@@ -427,6 +428,7 @@ export default function App() {
         background: C.pageBg,
         transition: 'margin-left 0.25s ease',
       }}>
+        <ErrorBoundary>
         {view === 'lv1' && (
           <LV1View
             dept={selDept}
@@ -464,6 +466,7 @@ export default function App() {
             onBack={() => setSelProc(null)}
           />
         )}
+        </ErrorBoundary>
       </div>
 
       {/* ── 모달 ────────────────────────────────────────────── */}

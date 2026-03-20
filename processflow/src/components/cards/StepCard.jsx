@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { C } from '../../constants'
 import { loadImage } from '../../imageDB'
 
@@ -8,6 +8,7 @@ import { loadImage } from '../../imageDB'
 export default function StepCard({ step, index, onEdit, onDelete, dragHandleProps }) {
   const [expanded, setExpanded] = useState(false)
   const [imageUrls, setImageUrls] = useState({})
+  const blobUrlsRef = useRef(new Set())  // Blob URL 추적 (메모리 누수 방지)
 
   useEffect(() => {
     if (!expanded || !step.images?.length) return
@@ -18,7 +19,9 @@ export default function StepCard({ step, index, onEdit, onDelete, dragHandleProp
         if (imageUrls[img.id]) continue
         const record = await loadImage(img.id)
         if (record?.blob && !cancelled) {
-          urls[img.id] = URL.createObjectURL(record.blob)
+          const url = URL.createObjectURL(record.blob)
+          blobUrlsRef.current.add(url)
+          urls[img.id] = url
         }
       }
       if (!cancelled) setImageUrls((prev) => ({ ...prev, ...urls }))
@@ -26,8 +29,12 @@ export default function StepCard({ step, index, onEdit, onDelete, dragHandleProp
     return () => { cancelled = true }
   }, [expanded, step.images])
 
+  // 언마운트 시 모든 Blob URL 해제
   useEffect(() => {
-    return () => Object.values(imageUrls).forEach((url) => URL.revokeObjectURL(url))
+    return () => {
+      blobUrlsRef.current.forEach((url) => URL.revokeObjectURL(url))
+      blobUrlsRef.current.clear()
+    }
   }, [])
 
   const handleDelete = () => {
