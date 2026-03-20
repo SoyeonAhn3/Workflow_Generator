@@ -5,7 +5,7 @@ import { loadImage } from '../../imageDB'
 /**
  * StepCard — 단계 카드 (헤더 + 펼치면 상세 섹션)
  */
-export default function StepCard({ step, index, onEdit, onDelete }) {
+export default function StepCard({ step, index, onEdit, onDelete, dragHandleProps }) {
   const [expanded, setExpanded] = useState(false)
   const [imageUrls, setImageUrls] = useState({})
 
@@ -62,6 +62,22 @@ export default function StepCard({ step, index, onEdit, onDelete }) {
         }}
         onClick={() => setExpanded((v) => !v)}
       >
+        {/* 드래그 손잡이 */}
+        {dragHandleProps && (
+          <div
+            {...dragHandleProps}
+            style={{
+              cursor: 'grab', color: C.gray300, fontSize: 18,
+              display: 'flex', alignItems: 'center',
+              padding: '0 2px', flexShrink: 0, userSelect: 'none',
+              touchAction: 'none',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            ⠿
+          </div>
+        )}
+
         {/* 번호 뱃지 — 둥근 사각형 */}
         <div style={{
           width: 32, height: 32, minWidth: 32, borderRadius: 8,

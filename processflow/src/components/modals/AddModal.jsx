@@ -26,7 +26,7 @@ const SAMPLES = {
  * AddModal — 부서/그룹/프로세스 추가
  * @param {{ level: 'dept'|'group'|'proc', onSave: (data: object) => void, onClose: () => void }} props
  */
-export default function AddModal({ level, onSave, onClose }) {
+export default function AddModal({ level, onSave, onClose, deptNames = [] }) {
   const [form, setForm] = useState({})
 
   const handleChange = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
@@ -41,6 +41,9 @@ export default function AddModal({ level, onSave, onClose }) {
       const name = (form.name || '').trim()
       if (!name) return alert(`${cfg.fields[0].label}을(를) 입력하세요`)
       if (level === 'group' && !(form.dept || '').trim()) return alert('담당 부서를 입력하세요')
+      if (level === 'group' && deptNames.length > 0 && !deptNames.includes((form.dept || '').trim())) {
+        return alert(`"${(form.dept || '').trim()}" 부서는 존재하지 않습니다.\n등록된 부서: ${deptNames.join(', ')}`)
+      }
       onSave({ ...form, name })
     }
   }

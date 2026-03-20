@@ -195,6 +195,20 @@ export default function App() {
   }
 
   // ══════════════════════════════════════════════════════════
+  // ── 단계 순서 변경 핸들러 (드래그 앤 드롭) ──────────────
+  // ══════════════════════════════════════════════════════════
+
+  const handleReorderSteps = (nextSteps) => {
+    if (!selProc) return
+    updateProc(selProc.id, (p) => ({ ...p, steps: nextSteps }))
+    setSelProc((prev) => prev ? { ...prev, steps: nextSteps } : prev)
+    setSelGroup((prev) => prev ? {
+      ...prev,
+      processes: prev.processes.map((p) => p.id !== selProc.id ? p : { ...p, steps: nextSteps }),
+    } : prev)
+  }
+
+  // ══════════════════════════════════════════════════════════
   // ── 삭제 핸들러 4종 ──────────────────────────────────────
   // ══════════════════════════════════════════════════════════
 
@@ -446,6 +460,7 @@ export default function App() {
             onAddStep={() => setStepModal({ mode: 'add' })}
             onEditStep={(step) => setStepModal({ mode: 'edit', step })}
             onDeleteStep={handleDeleteStep}
+            onReorderSteps={handleReorderSteps}
             onBack={() => setSelProc(null)}
           />
         )}
@@ -457,6 +472,7 @@ export default function App() {
           level={addModal}
           onSave={handleAddSave}
           onClose={() => setAddModal(null)}
+          deptNames={data.map(d => d.name)}
         />
       )}
 

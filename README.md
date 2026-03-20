@@ -36,6 +36,7 @@
 | 빌드 도구 | Vite 5 | 빌드 및 개발 서버 |
 | 스타일링 | Inline CSS (CSS-in-JS) | 외부 라이브러리 없음 |
 | 다이어그램 | SVG + CSS Grid 직접 구현 | LinearFlow / SwimLane |
+| 드래그 앤 드롭 | @dnd-kit (core + sortable) | 단계 순서 변경 |
 | 텍스트 저장 | LocalStorage | Department[] JSON 저장 |
 | 이미지 저장 | IndexedDB (idb 라이브러리) | Blob 저장, 수백MB 가능 |
 | Word 생성 | docx 라이브러리 | 브라우저에서 직접 .docx 생성 |
@@ -47,7 +48,7 @@
 
 ```bash
 # 프로덕션
-npm install react react-dom docx file-saver idb
+npm install react react-dom docx file-saver idb @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
 
 # 개발
 npm install -D vite @vitejs/plugin-react netlify-cli
@@ -126,12 +127,14 @@ Department (부서)
 | **AI 기능** | AI 프로세스 자동 구조화 (3단계 위저드) | ✅ |
 | | 직접 입력 방식 | ✅ |
 | | Netlify Functions API 프록시 (JSON 재시도 3회) | ✅ |
-| **v1.5 권장** | 단계 순서 드래그 변경 | 🔲 |
-| | JSON 백업/복원 | 🔲 |
+| **v1.5** | 병렬 분기·합류 다이어그램 (colIndex 기반) | ✅ |
+| | 단계 순서 드래그 변경 (@dnd-kit) | ✅ |
+| | 그룹 추가 시 부서 존재 검증 | ✅ |
+| | 병렬 스텝 동일 번호 표시 | ✅ |
+| **v2 권장** | JSON 백업/복원 | 🔲 |
 | | 이미지 자동 리사이즈 | 🔲 |
-| **v2 추후** | Azure Cosmos DB + Blob Storage 연동 | 🔲 |
+| **v3 추후** | Azure Cosmos DB + Blob Storage 연동 | 🔲 |
 | | Azure AD 사용자 인증 | 🔲 |
-| | 분기/반려 경로 SVG 표현 | 🔲 |
 
 ---
 
@@ -180,7 +183,9 @@ processflow/
 │   ├── Phase4_다이어그램.md          # ✅ 완료
 │   ├── Phase5_Word내보내기.md        # ✅ 완료
 │   ├── Phase6_AI자동구조화.md        # ✅ 완료
-│   └── Phase7_통합테스트_배포.md     # ✅ 완료
+│   ├── Phase7_통합테스트_배포.md     # ✅ 완료
+│   ├── Phase8_병렬분기다이어그램.md   # ✅ 완료
+│   └── Phase9_드래그앤드롭_UX개선.md  # ✅ 완료
 ├── Pre-Requirement/
 │   └── ProcessFlow_개발명세서.txt    # v1.3
 ├── netlify.toml             # Netlify 빌드 설정
@@ -202,6 +207,8 @@ processflow/
 | **Phase 5** | Word 내보내기 (docx 생성 + 이미지 삽입) | ✅ 완료 |
 | **Phase 6** | AI 자동 구조화 (Netlify Functions + 위저드) + 그룹/프로세스 수정 | ✅ 완료 |
 | **Phase 7** | 통합 테스트 + Netlify 배포 | ✅ 완료 |
+| **Phase 8** | 병렬 분기·합류 다이어그램 (colIndex 기반 SwimLane) | ✅ 완료 |
+| **Phase 9** | 드래그 앤 드롭 순서 변경 + UX 개선 (@dnd-kit, 부서 검증, 병렬 번호) | ✅ 완료 |
 
 > 상세 내용은 [`Phase/`](./Phase/) 디렉토리 참고
 
@@ -257,6 +264,8 @@ netlify dev
 
 | 날짜 | 버전 | 내용 |
 |------|------|------|
+| 2026-03-20 | v2.3 | Phase 9 완료 — @dnd-kit 드래그 앤 드롭 단계 순서 변경, colIndex 1-based, 그룹 부서 검증, 병렬 스텝 동일 번호 |
+| 2026-03-20 | v2.2 | Phase 8 완료 — SwimLane 병렬 분기·합류 다이어그램, colIndex 기반 열 배치, SVG 오버레이 화살표, StepModal Step 필드 |
 | 2026-03-18 | v2.1 | Phase 7 완료 — Netlify 배포 (processflow-generator.netlify.app), Word 템플릿 v7 기준 전면 재작성, 사용자 테스트 완료 |
 | 2026-03-16 | v2.0 | UI 전체 개선 — 카드 좌측 강조선 + 박스 그림자, LV2 프로세스 카드 태그/순번 뱃지, LV3 헤더 카드화, StepCard 정보 3칸 그리드 + 섹션 구분, 주의사항 단계 노란 강조 |
 | 2026-03-16 | v1.9 | Phase 6 완료 — AI 자동 구조화 (AddMethodModal, AIGenerateModal, claude.js), 그룹/프로세스 수정 모달, LV1~LV3 수정 버튼, selDept/selGroup/selProc 동기화 버그 수정 |

@@ -40,10 +40,13 @@ export default function SwimLane({ steps }) {
   const deptColorMap = {}
   depts.forEach((d, i) => { deptColorMap[d] = DEPT_COLORS[i % DEPT_COLORS.length] })
 
-  // ── 4. 스텝 번호 맵 (colIndex 정렬 기준 순서 번호) ──
-  const sortedForNumber = [...stepsWithCol].sort((a, b) => a.colIndex - b.colIndex)
+  // ── 4. 스텝 번호 맵 (같은 colIndex → 같은 번호) ──
   const stepNumberMap = {}
-  sortedForNumber.forEach((s, i) => { stepNumberMap[s.id] = i + 1 })
+  colIndices.forEach((col, i) => {
+    stepsWithCol.filter(s => s.colIndex === col).forEach(s => {
+      stepNumberMap[s.id] = i + 1
+    })
+  })
 
   // ── 5. connections 자동 파생 (colIndex 그룹핑 기반) ──
   // 같은 colIndex끼리 그룹핑 후, 인접한 두 열 사이를 전부 연결 (분기·합류 자동 처리)
@@ -63,7 +66,7 @@ export default function SwimLane({ steps }) {
 
   // ── 6. 노드 위치 측정 후 화살표 경로 계산 ──
   // steps/connections가 바뀔 때만 재실행 (의존성 배열로 무한루프 방지)
-  const stepsKey = safeSteps.map(s => s.id).join(',')
+  const stepsKey = safeSteps.map(s => `${s.id}:${s.colIndex ?? ''}`).join(',')
   const connKey  = resolvedConnections.map(c => `${c.from}-${c.to}`).join(',')
 
   useLayoutEffect(() => {
