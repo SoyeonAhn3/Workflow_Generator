@@ -33,12 +33,14 @@ export default function ModalBase({ title, width = 440, onClose, children }) {
       onClick={onClose}
     >
       <div style={modalStyleFn(width)} onClick={(e) => e.stopPropagation()}>
-        <h3
-          id={titleId}
-          style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 700, color: C.gray700 }}
-        >
-          {title}
-        </h3>
+        {title && (
+          <h3
+            id={titleId}
+            style={{ margin: '0 0 20px', fontSize: 16, fontWeight: 700, color: C.gray700 }}
+          >
+            {title}
+          </h3>
+        )}
         {children}
       </div>
     </div>

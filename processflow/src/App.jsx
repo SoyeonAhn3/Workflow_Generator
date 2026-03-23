@@ -21,10 +21,14 @@ export default function App() {
   // ── 데이터 ──────────────────────────────────────────────
   const [data, setData] = useState(() => loadFromStorage() || SAMPLE_DATA)
 
-  // ── 네비게이션 선택 상태 ──────────────────────────────────
-  const [selDept,  setSelDept]  = useState(null)
-  const [selGroup, setSelGroup] = useState(null)
-  const [selProc,  setSelProc]  = useState(null)
+  // ── 네비게이션 선택 상태 (ID만 저장 → 객체는 data에서 파생) ──
+  const [selDeptId,  setSelDeptId]  = useState(null)
+  const [selGroupId, setSelGroupId] = useState(null)
+  const [selProcId,  setSelProcId]  = useState(null)
+
+  const selDept  = data.find(d => d.id === selDeptId) || null
+  const selGroup = selDept?.groups.find(g => g.id === selGroupId) || null
+  const selProc  = selGroup?.processes.find(p => p.id === selProcId) || null
 
   // ── 사이드바 ──────────────────────────────────────────────
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -79,34 +83,34 @@ export default function App() {
 
   // ── 사이드바 선택 헬퍼 ────────────────────────────────────
   const handleSelectDept = (dept) => {
-    setSelDept(dept)
-    setSelGroup(null)
-    setSelProc(null)
+    setSelDeptId(dept.id)
+    setSelGroupId(null)
+    setSelProcId(null)
   }
 
   const handleSelectGroup = (dept, group) => {
-    setSelDept(dept)
-    setSelGroup(group)
-    setSelProc(null)
+    setSelDeptId(dept.id)
+    setSelGroupId(group.id)
+    setSelProcId(null)
     setExpGroups((prev) => ({ ...prev, [group.id]: !prev[group.id] }))
   }
 
   const handleSelectProc = (dept, group, proc) => {
-    setSelDept(dept)
-    setSelGroup(group)
-    setSelProc(proc)
+    setSelDeptId(dept.id)
+    setSelGroupId(group.id)
+    setSelProcId(proc.id)
   }
 
   // LV1View에서 그룹 클릭 시
   const handleLV1SelectGroup = (group) => {
-    setSelGroup(group)
-    setSelProc(null)
+    setSelGroupId(group.id)
+    setSelProcId(null)
     setExpGroups((prev) => ({ ...prev, [group.id]: true }))
   }
 
   // LV2View에서 프로세스 클릭 시
   const handleLV2SelectProc = (proc) => {
-    setSelProc(proc)
+    setSelProcId(proc.id)
   }
 
   const sidebarWidth = sidebarOpen ? 220 : 48
@@ -140,8 +144,6 @@ export default function App() {
           d.id !== selDept.id ? d : { ...d, groups: [...d.groups, newGroup] }
         )
       )
-      // selDept 갱신
-      setSelDept((prev) => prev ? { ...prev, groups: [...prev.groups, newGroup] } : prev)
     } else if (addModal === 'proc') {
       if (!selGroup) return
       const now = new Date()
@@ -163,8 +165,6 @@ export default function App() {
           ),
         }))
       )
-      // selGroup 갱신
-      setSelGroup((prev) => prev ? { ...prev, processes: [...prev.processes, newProc] } : prev)
     }
     setAddModal(null)
   }
@@ -176,21 +176,11 @@ export default function App() {
   const handleStepSave = (stepData) => {
     if (!selProc) return
     if (stepModal.mode === 'add') {
-      const nextSteps = [...(selProc.steps || []), stepData]
-      updateProc(selProc.id, (p) => ({ ...p, steps: nextSteps }))
-      setSelProc((prev) => prev ? { ...prev, steps: nextSteps } : prev)
-      setSelGroup((prev) => prev ? {
-        ...prev,
-        processes: prev.processes.map((p) => p.id !== selProc.id ? p : { ...p, steps: nextSteps }),
-      } : prev)
+      updateProc(selProc.id, (p) => ({ ...p, steps: [...(p.steps || []), stepData] }))
     } else {
-      const nextSteps = (selProc.steps || []).map((s) => (s.id !== stepData.id ? s : stepData))
-      updateProc(selProc.id, (p) => ({ ...p, steps: nextSteps }))
-      setSelProc((prev) => prev ? { ...prev, steps: nextSteps } : prev)
-      setSelGroup((prev) => prev ? {
-        ...prev,
-        processes: prev.processes.map((p) => p.id !== selProc.id ? p : { ...p, steps: nextSteps }),
-      } : prev)
+      updateProc(selProc.id, (p) => ({
+        ...p, steps: (p.steps || []).map((s) => (s.id !== stepData.id ? s : stepData)),
+      }))
     }
     setStepModal(null)
   }
@@ -202,11 +192,6 @@ export default function App() {
   const handleReorderSteps = (nextSteps) => {
     if (!selProc) return
     updateProc(selProc.id, (p) => ({ ...p, steps: nextSteps }))
-    setSelProc((prev) => prev ? { ...prev, steps: nextSteps } : prev)
-    setSelGroup((prev) => prev ? {
-      ...prev,
-      processes: prev.processes.map((p) => p.id !== selProc.id ? p : { ...p, steps: nextSteps }),
-    } : prev)
   }
 
   // ══════════════════════════════════════════════════════════
@@ -245,20 +230,16 @@ export default function App() {
     const { type, target } = deleteModal
 
     if (type === '부서') {
-      // 1. 하위 전체 이미지 id 수집
       const imageIds = target.groups
         .flatMap((g) => g.processes)
         .flatMap((p) => p.steps || [])
         .flatMap((s) => s.images || [])
         .map((img) => img.id)
-      // 2. IndexedDB 먼저 삭제
       await deleteImages(imageIds)
-      // 3. LocalStorage 저장
       updateData((prev) => prev.filter((d) => d.id !== target.id))
-      // 4. 선택 상태 초기화
-      setSelDept(null)
-      setSelGroup(null)
-      setSelProc(null)
+      setSelDeptId(null)
+      setSelGroupId(null)
+      setSelProcId(null)
     } else if (type === '그룹') {
       const imageIds = target.processes
         .flatMap((p) => p.steps || [])
@@ -268,12 +249,8 @@ export default function App() {
       updateData((prev) =>
         prev.map((d) => ({ ...d, groups: d.groups.filter((g) => g.id !== target.id) }))
       )
-      // selDept 갱신
-      setSelDept((prev) =>
-        prev ? { ...prev, groups: prev.groups.filter((g) => g.id !== target.id) } : prev
-      )
-      setSelGroup(null)
-      setSelProc(null)
+      setSelGroupId(null)
+      setSelProcId(null)
     } else if (type === '프로세스') {
       const imageIds = (target.steps || [])
         .flatMap((s) => s.images || [])
@@ -288,27 +265,24 @@ export default function App() {
           })),
         }))
       )
-      // selGroup 갱신
-      setSelGroup((prev) =>
-        prev ? { ...prev, processes: prev.processes.filter((p) => p.id !== target.id) } : prev
-      )
-      setSelProc(null)
+      setSelProcId(null)
+    } else if (type === '단계') {
+      if (!selProc) return
+      const imageIds = (target.images || []).map((img) => img.id)
+      await deleteImages(imageIds)
+      updateProc(selProc.id, (p) => ({
+        ...p, steps: (p.steps || []).filter((s) => s.id !== target.id),
+      }))
     }
     setDeleteModal(null)
   }
 
-  // 단계 삭제 (window.confirm — 모달 없음)
-  const handleDeleteStep = async (step) => {
-    if (!selProc) return
-    const imageIds = (step.images || []).map((img) => img.id)
-    await deleteImages(imageIds)
-    const nextSteps = (selProc.steps || []).filter((s) => s.id !== step.id)
-    updateProc(selProc.id, (p) => ({ ...p, steps: nextSteps }))
-    setSelProc((prev) => prev ? { ...prev, steps: nextSteps } : prev)
-    setSelGroup((prev) => prev ? {
-      ...prev,
-      processes: prev.processes.map((p) => p.id !== selProc.id ? p : { ...p, steps: nextSteps }),
-    } : prev)
+  // 단계 삭제 요청 (DeleteConfirmModal 사용)
+  const requestDeleteStep = (step) => {
+    setDeleteModal({
+      type: '단계', target: step,
+      childInfo: (step.images || []).length > 0 ? `첨부 이미지 ${step.images.length}개가 함께 삭제됩니다.` : null,
+    })
   }
 
   // ══════════════════════════════════════════════════════════
@@ -325,38 +299,19 @@ export default function App() {
         ),
       }))
     )
-    // selGroup 갱신
-    setSelGroup((prev) => prev ? { ...prev, processes: [...prev.processes, newProc] } : prev)
-    // AI 모달 닫고 LV3로 이동
     setAiModal(false)
-    setSelProc(newProc)
+    setSelProcId(newProc.id)
   }
 
   // ── 프로세스 수정 핸들러 ──────────────────────────────────
   const handleEditProcSave = (updated) => {
     updateProc(updated.id, () => updated)
-    // selProc: LV3에서 편집했을 때만 업데이트 (LV2에서 호출 시 LV3로 이동 방지)
-    setSelProc((prev) => prev?.id === updated.id ? updated : prev)
-    // selGroup 내 proc 업데이트
-    setSelGroup((prev) => prev ? {
-      ...prev,
-      processes: prev.processes.map((p) => p.id !== updated.id ? p : updated),
-    } : prev)
-    // selDept 내 proc 업데이트 (LV1→LV2 재진입 시 최신 데이터 반영)
-    setSelDept((prev) => prev ? {
-      ...prev,
-      groups: prev.groups.map((g) => ({
-        ...g,
-        processes: g.processes.map((p) => p.id !== updated.id ? p : updated),
-      })),
-    } : prev)
     setEditProcModal(null)
   }
 
   // ── 그룹 수정 핸들러 ──────────────────────────────────────
   const handleEditGroupSave = (updated, newDeptId) => {
     if (newDeptId) {
-      // 다른 부서로 이동 — 현재 화면 유지 (selGroup/selProc 건드리지 않음)
       updateData((prev) =>
         prev.map((d) => {
           if (d.groups.some((g) => g.id === updated.id)) {
@@ -368,26 +323,13 @@ export default function App() {
           return d
         })
       )
-      // selDept에서 해당 그룹 제거 (현재 LV1 화면 갱신)
-      setSelDept((prev) => prev ? {
-        ...prev,
-        groups: prev.groups.filter((g) => g.id !== updated.id),
-      } : prev)
     } else {
-      // 같은 부서 내 수정
       updateData((prev) =>
         prev.map((d) => ({
           ...d,
           groups: d.groups.map((g) => g.id !== updated.id ? g : updated),
         }))
       )
-      // selDept 업데이트 (LV1 카드 즉시 반영)
-      setSelDept((prev) => prev ? {
-        ...prev,
-        groups: prev.groups.map((g) => g.id !== updated.id ? g : updated),
-      } : prev)
-      // selGroup: 현재 해당 그룹을 보고 있을 때만 업데이트 (LV2 이동 방지)
-      setSelGroup((prev) => prev?.id === updated.id ? updated : prev)
     }
     setEditGroupModal(null)
   }
@@ -449,7 +391,7 @@ export default function App() {
             onDeleteProc={requestDeleteProc}
             onEditProc={(proc) => setEditProcModal(proc)}
             onExportWord={() => setExportGroup(selGroup)}
-            onBack={() => { setSelGroup(null); setSelProc(null) }}
+            onBack={() => { setSelGroupId(null); setSelProcId(null) }}
           />
         )}
         {view === 'lv3' && (
@@ -461,9 +403,9 @@ export default function App() {
             onEditProc={(proc) => setEditProcModal(proc)}
             onAddStep={() => setStepModal({ mode: 'add' })}
             onEditStep={(step) => setStepModal({ mode: 'edit', step })}
-            onDeleteStep={handleDeleteStep}
+            onDeleteStep={requestDeleteStep}
             onReorderSteps={handleReorderSteps}
-            onBack={() => setSelProc(null)}
+            onBack={() => setSelProcId(null)}
           />
         )}
         </ErrorBoundary>

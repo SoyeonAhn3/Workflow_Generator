@@ -131,6 +131,10 @@ Department (부서)
 | | 단계 순서 드래그 변경 (@dnd-kit) | ✅ |
 | | 그룹 추가 시 부서 존재 검증 | ✅ |
 | | 병렬 스텝 동일 번호 표시 | ✅ |
+| **코드 품질** | ID 기반 파생 상태 (수동 동기화 제거) | ✅ |
+| | 모달 공통화 (ModalBase 통일) | ✅ |
+| | Word Export 모듈 분리 | ✅ |
+| | architecture-guard 구조 점검 스킬 | ✅ |
 | **v2 권장** | JSON 백업/복원 | 🔲 |
 | | 이미지 자동 리사이즈 | 🔲 |
 | **v3 추후** | Azure Cosmos DB + Blob Storage 연동 | 🔲 |
@@ -147,7 +151,8 @@ processflow/
 │   ├── constants.js         # 색상 토큰(C), SAMPLE_DATA, CLAUDE_MODEL
 │   ├── storage.js           # LocalStorage read/write
 │   ├── imageDB.js           # IndexedDB 이미지 CRUD
-│   ├── wordExport.js        # Word(.docx) 생성 로직
+│   ├── wordExport.js        # Word(.docx) 생성 로직 (섹션 빌더)
+│   ├── wordExport.helpers.js # Word 상수·셀 헬퍼 함수
 │   └── components/
 │       ├── layout/
 │       │   ├── TopNav.jsx
@@ -160,10 +165,9 @@ processflow/
 │       │   ├── LinearFlow.jsx
 │       │   └── SwimLane.jsx
 │       ├── cards/
-│       │   ├── GroupCard.jsx
-│       │   ├── ProcessCard.jsx
 │       │   └── StepCard.jsx
 │       └── modals/
+│           ├── ModalBase.jsx          # 모달 공통 래퍼 (ESC·배경클릭·접근성)
 │           ├── AddModal.jsx
 │           ├── AddMethodModal.jsx
 │           ├── AIGenerateModal.jsx
@@ -185,7 +189,8 @@ processflow/
 │   ├── Phase6_AI자동구조화.md        # ✅ 완료
 │   ├── Phase7_통합테스트_배포.md     # ✅ 완료
 │   ├── Phase8_병렬분기다이어그램.md   # ✅ 완료
-│   └── Phase9_드래그앤드롭_UX개선.md  # ✅ 완료
+│   ├── Phase9_드래그앤드롭_UX개선.md  # ✅ 완료
+│   └── Phase10_코드구조점검_리팩토링.md # ✅ 완료
 ├── Pre-Requirement/
 │   └── ProcessFlow_개발명세서.txt    # v1.3
 ├── netlify.toml             # Netlify 빌드 설정
@@ -209,6 +214,7 @@ processflow/
 | **Phase 7** | 통합 테스트 + Netlify 배포 | ✅ 완료 |
 | **Phase 8** | 병렬 분기·합류 다이어그램 (colIndex 기반 SwimLane) | ✅ 완료 |
 | **Phase 9** | 드래그 앤 드롭 순서 변경 + UX 개선 (@dnd-kit, 부서 검증, 병렬 번호) | ✅ 완료 |
+| **Phase 10** | 코드 구조 점검 + 리팩토링 (architecture-guard, ID 파생 상태, 모듈 분리) | ✅ 완료 |
 
 > 상세 내용은 [`Phase/`](./Phase/) 디렉토리 참고
 
@@ -264,6 +270,7 @@ netlify dev
 
 | 날짜 | 버전 | 내용 |
 |------|------|------|
+| 2026-03-23 | v2.5 | Phase 10 — architecture-guard 스킬 생성, App.jsx ID 기반 파생 상태 전환 (550→487줄, 동기화 버그 원천 차단), Escape 핸들러 ModalBase 통일, wordExport 모듈 분리 (597→455줄), 삭제 아이콘 SVG 교체 |
 | 2026-03-20 | v2.4 | 코드 품질 개선 — ModalBase 공통 컴포넌트 추출 (모달 8개 스타일 중복 제거), ErrorBoundary, 접근성(Escape 닫기, role="dialog"), Blob URL 메모리 누수 수정 |
 | 2026-03-20 | v2.3 | Phase 9 완료 — @dnd-kit 드래그 앤 드롭 단계 순서 변경, colIndex 1-based, 그룹 부서 검증, 병렬 스텝 동일 번호 |
 | 2026-03-20 | v2.2 | Phase 8 완료 — SwimLane 병렬 분기·합류 다이어그램, colIndex 기반 열 배치, SVG 오버레이 화살표, StepModal Step 필드 |

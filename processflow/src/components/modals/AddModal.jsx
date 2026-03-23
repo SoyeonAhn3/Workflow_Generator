@@ -32,6 +32,7 @@ export default function AddModal({ level, onSave, onClose, deptNames = [] }) {
     if (level === 'dept') {
       const name = (form.name || '').trim()
       if (!name) return alert('부서명을 입력하세요')
+      if (deptNames.includes(name)) return alert(`"${name}" 부서가 이미 존재합니다.`)
       onSave({ name })
     } else {
       const cfg = SAMPLES[level]

@@ -83,13 +83,16 @@ export default function StepModal({ mode, step, onSave, onClose }) {
     const trimTitle = title.trim()
     if (!trimTitle) return alert('단계명을 입력하세요')
     const parsed = parseInt(colIndex, 10)
+    if (colIndex !== '' && (isNaN(parsed) || parsed < 1)) {
+      return alert('Step 순서는 1 이상의 정수만 입력 가능합니다.')
+    }
     onSave({
       id: mode === 'edit' ? step.id : 'step_' + Date.now(),
       title: trimTitle,
       screenName: screenName.trim(),
       dept: dept.trim(),
       pt: pt.trim(),
-      ...(colIndex !== '' && !isNaN(parsed) ? { colIndex: parsed } : {}),
+      ...(colIndex !== '' && parsed >= 1 ? { colIndex: parsed } : {}),
       logic: logic.trim(),
       warning: warning.trim(),
       images,
