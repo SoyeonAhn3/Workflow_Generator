@@ -4,7 +4,7 @@
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-processflow--generator.netlify.app-brightgreen?style=for-the-badge)](https://processflow-generator.netlify.app/)
 
-<img width="917" height="598" alt="image" src="https://github.com/user-attachments/assets/0e612ea2-6308-480e-bbb8-98aee205eb6e" />
+https://github.com/user-attachments/assets/cef4d085-daaa-4fec-a5e3-e2a630244b45
 
 ---
 
