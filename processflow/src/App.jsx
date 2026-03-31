@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { loadFromStorage, saveToStorage } from './storage.js'
 import { SAMPLE_DATA, C } from './constants.js'
 import { deleteImages } from './imageDB.js'
+import useIsMobile from './hooks/useIsMobile.js'
 import TopNav from './components/layout/TopNav.jsx'
 import Sidebar from './components/layout/Sidebar.jsx'
 import LV1View from './components/views/LV1View.jsx'
@@ -18,6 +19,8 @@ import EditGroupModal from './components/modals/EditGroupModal.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
 
 export default function App() {
+  const isMobile = useIsMobile()
+
   // ── 데이터 ──────────────────────────────────────────────
   const [data, setData] = useState(() => loadFromStorage() || SAMPLE_DATA)
 
@@ -31,7 +34,7 @@ export default function App() {
   const selProc  = selGroup?.processes.find(p => p.id === selProcId) || null
 
   // ── 사이드바 ──────────────────────────────────────────────
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
   const [expDepts,    setExpDepts]    = useState({})
   const [expGroups,   setExpGroups]   = useState({})
 
@@ -82,6 +85,8 @@ export default function App() {
     setExpGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }))
 
   // ── 사이드바 선택 헬퍼 ────────────────────────────────────
+  const closeSidebarIfMobile = () => { if (isMobile) setSidebarOpen(false) }
+
   const handleSelectDept = (dept) => {
     setSelDeptId(dept.id)
     setSelGroupId(null)
@@ -93,12 +98,14 @@ export default function App() {
     setSelGroupId(group.id)
     setSelProcId(null)
     setExpGroups((prev) => ({ ...prev, [group.id]: !prev[group.id] }))
+    closeSidebarIfMobile()
   }
 
   const handleSelectProc = (dept, group, proc) => {
     setSelDeptId(dept.id)
     setSelGroupId(group.id)
     setSelProcId(proc.id)
+    closeSidebarIfMobile()
   }
 
   // LV1View에서 그룹 클릭 시
@@ -113,7 +120,7 @@ export default function App() {
     setSelProcId(proc.id)
   }
 
-  const sidebarWidth = sidebarOpen ? 220 : 48
+  const sidebarWidth = isMobile ? 0 : (sidebarOpen ? 220 : 48)
 
   // ══════════════════════════════════════════════════════════
   // ── 추가 핸들러 ──────────────────────────────────────────
@@ -345,6 +352,7 @@ export default function App() {
         storageSizeKB={storageSizeKB}
         storageOk={storageOk}
         sidebarOpen={sidebarOpen}
+        isMobile={isMobile}
         onToggleSidebar={() => setSidebarOpen((v) => !v)}
       />
 
@@ -352,6 +360,7 @@ export default function App() {
       <Sidebar
         data={data}
         open={sidebarOpen}
+        isMobile={isMobile}
         selDept={selDept}
         selGroup={selGroup}
         expDepts={expDepts}
@@ -359,13 +368,14 @@ export default function App() {
         onSelectGroup={handleSelectGroup}
         onToggleDept={handleToggleDept}
         onAddDept={() => setAddModal('dept')}
+        onClose={() => setSidebarOpen(false)}
       />
 
       {/* Main Content */}
       <div style={{
         marginTop: 48,
         marginLeft: sidebarWidth,
-        padding: '28px 36px',
+        padding: isMobile ? '20px 16px' : '28px 36px',
         minHeight: 'calc(100vh - 48px)',
         background: C.pageBg,
         transition: 'margin-left 0.25s ease',

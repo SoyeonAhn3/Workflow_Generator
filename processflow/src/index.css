@@ -73,3 +73,20 @@ button {
   font-family: inherit;
   line-height: 1;
 }
+
+/* ── 모바일 반응형 ── */
+@media (max-width: 768px) {
+  :root {
+    font-size: 13px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  /* 가로 스크롤 가능한 다이어그램 영역 */
+  .swim-lane-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

@@ -2,9 +2,9 @@ import { C } from '../../constants'
 
 /**
  * TopNav
- * @param {{ storageSizeKB: number, storageOk: boolean, sidebarOpen: boolean, onToggleSidebar: () => void }} props
+ * @param {{ storageSizeKB: number, storageOk: boolean, sidebarOpen: boolean, isMobile: boolean, onToggleSidebar: () => void }} props
  */
-export default function TopNav({ storageSizeKB, storageOk, sidebarOpen, onToggleSidebar }) {
+export default function TopNav({ storageSizeKB, storageOk, sidebarOpen, isMobile, onToggleSidebar }) {
   return (
     <div style={{
       background: C.navy,
@@ -39,12 +39,14 @@ export default function TopNav({ storageSizeKB, storageOk, sidebarOpen, onToggle
         >
           ☰
         </button>
-        <span style={{ fontWeight: 700, fontSize: 16, letterSpacing: '-0.3px' }}>
+        <span style={{ fontWeight: 700, fontSize: isMobile ? 14 : 16, letterSpacing: '-0.3px' }}>
           ProcessFlow
         </span>
-        <span style={{ fontSize: 12, opacity: 0.7, marginLeft: 10, fontWeight: 400 }}>
-          업무 프로세스 관리 플랫폼
-        </span>
+        {!isMobile && (
+          <span style={{ fontSize: 12, opacity: 0.7, marginLeft: 10, fontWeight: 400 }}>
+            업무 프로세스 관리 플랫폼
+          </span>
+        )}
       </div>
 
       {/* 오른쪽: 저장 상태 뱃지 */}
@@ -52,13 +54,14 @@ export default function TopNav({ storageSizeKB, storageOk, sidebarOpen, onToggle
         fontSize: 11,
         background: storageOk ? 'rgba(255,255,255,0.15)' : 'rgba(239,68,68,0.8)',
         color: C.white,
-        padding: '4px 12px',
+        padding: isMobile ? '3px 8px' : '4px 12px',
         borderRadius: 14,
         fontWeight: 500,
         border: '1px solid rgba(255,255,255,0.2)',
+        whiteSpace: 'nowrap',
       }}>
         {storageOk
-          ? `저장됨 · ${storageSizeKB}KB`
+          ? (isMobile ? `${storageSizeKB}KB` : `저장됨 · ${storageSizeKB}KB`)
           : '저장 실패'
         }
       </span>

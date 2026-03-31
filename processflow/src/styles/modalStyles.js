@@ -12,8 +12,9 @@ export const overlayStyle = {
 export const modalStyle = (width = 440) => ({
   background: C.white,
   borderRadius: 12,
-  padding: '28px 32px',
+  padding: window.innerWidth <= 768 ? '20px 18px' : '28px 32px',
   width,
+  maxWidth: '92vw',
   maxHeight: '85vh',
   overflowY: 'auto',
   boxShadow: '0 8px 30px rgba(0,0,0,0.18)',
