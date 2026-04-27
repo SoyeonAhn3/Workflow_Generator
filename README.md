@@ -1,286 +1,199 @@
-# ⚡ ProcessFlow
+🌐 [한국어](./README_ko.md) | [English](./README.md)
 
-> 업무 프로세스를 입력하면 자동으로 프로세스를 시각화하고 단계별 Word 매뉴얼을 생성해주는 웹 플랫폼
+# ProcessFlow
+
+> A web-based workflow documentation tool that structures departmental business processes into steps and exports them as formatted Word documents.
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-processflow--generator.netlify.app-brightgreen?style=for-the-badge)](https://processflow-generator.netlify.app/)
 
 https://github.com/user-attachments/assets/cef4d085-daaa-4fec-a5e3-e2a630244b45
 
----
+## Overview
 
-## 📌 프로젝트 개요
+Organizations maintain dozens of recurring workflows — monthly closings, budget reviews, cost allocations — that are documented manually in Word files. ProcessFlow replaces that manual effort: users define departments, group related processes, break each process into ordered steps with metadata (screen name, responsible team, processing time, logic, warnings, screenshots), and export the result as a styled `.docx` file. An optional AI feature can auto-generate step structures from a free-text description via the Claude API.
 
-| 항목 | 내용 |
-|------|------|
-| 서비스명 | ProcessFlow |
-| 대상 | SAP 기반 업무 팀 (CO, FI, MM 등) |
-| 예상 사용자 | 최대 20명 (동시 접속 ~3명) |
-| 배포 환경 | Netlify (외부 접근 가능) |
-| 배포 URL | https://processflow-generator.netlify.app |
-| 저장 방식 | LocalStorage (텍스트) + IndexedDB (이미지) |
-| 백엔드 | 없음 — Netlify Functions만 사용 (AI API 프록시) |
+## Table of Contents
 
-### 핵심 결과물
+- [How It Works](#how-it-works)
+- [Tech Stack](#tech-stack)
+- [AI Component](#ai-component)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [Documentation](#documentation)
+- [Current Status](#current-status)
+- [Limitations](#limitations)
 
-1. **수영 레인 다이어그램** — 부서별 업무 흐름 시각화
-2. **일렬 흐름도 (a→b→c)** — 단계 순서 한눈에 파악
-3. **Word 매뉴얼 자동 생성** — 그룹 단위, 단계별 상세 + 이미지 포함
+## How It Works
 
----
+```
+Define Departments → Create Process Groups → Add Processes
+        ↓
+  Add Steps (screen, dept, time, logic, warnings, images)
+        ↓
+  View as Linear Flow or Swim Lane Diagram
+        ↓
+  Export Group → Styled Word Document (.docx)
+```
 
-## 🛠 기술 스택
+Optionally, instead of adding steps manually:
 
-| 분류 | 기술 | 용도 |
-|------|------|------|
-| 프레임워크 | React 18 (Hooks) | SPA 구현 |
-| 빌드 도구 | Vite 5 | 빌드 및 개발 서버 |
-| 스타일링 | Inline CSS (CSS-in-JS) | 외부 라이브러리 없음 |
-| 다이어그램 | SVG + CSS Grid 직접 구현 | LinearFlow / SwimLane |
-| 드래그 앤 드롭 | @dnd-kit (core + sortable) | 단계 순서 변경 |
-| 텍스트 저장 | LocalStorage | Department[] JSON 저장 |
-| 이미지 저장 | IndexedDB (idb 라이브러리) | Blob 저장, 수백MB 가능 |
-| Word 생성 | docx 라이브러리 | 브라우저에서 직접 .docx 생성 |
-| AI API | Anthropic Claude API | 프로세스 자동 구조화 |
-| API 프록시 | Netlify Functions | API 키 서버사이드 보관 |
-| 배포 | Netlify | React 빌드 + Functions 통합 |
+```
+Describe workflow in free text → AI generates step structure → Review & confirm → Steps added
+```
 
-### 패키지
+## Tech Stack
+
+| Technology | Role | Why |
+|---|---|---|
+| React 19 | UI components, state management | Component-based SPA with hooks, no class overhead |
+| Vite 8 | Dev server, build tooling | Near-instant HMR, faster builds than Webpack |
+| localStorage | Text data persistence (process tree) | Zero-config, no server needed, works offline |
+| IndexedDB (idb) | Image blob storage for step screenshots | Handles large binary data that localStorage cannot (~hundreds of MB) |
+| docx + file-saver | Client-side Word document generation | Generates .docx in-browser without a server-side renderer |
+| @dnd-kit | Drag-and-drop step reordering | Lightweight, React-native DnD with accessible defaults |
+| Netlify | Hosting, serverless functions | Free tier covers the use case; Functions proxy the API key server-side |
+| Claude API (Anthropic) | AI-powered step auto-generation | Structured JSON output from free-text workflow descriptions |
+
+## AI Component
+
+| Input | Output |
+|---|---|
+| Free-text workflow description + department name | Structured step array (title, screen, dept, time, logic, warnings) |
+
+- **Endpoint**: `/.netlify/functions/claude` — serverless proxy to the Anthropic Messages API
+- **Model**: `claude-sonnet-4-6` (configurable via `CLAUDE_MODEL` env var)
+- **Processing**: Rule-based JSON parsing with up to 3 automatic retries on malformed responses
+- **Result nature**: Suggested draft — users review and confirm before steps are saved
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+
+- Anthropic API key (required only for the AI auto-generation feature)
+
+### Install & Run
 
 ```bash
-# 프로덕션
-npm install react react-dom docx file-saver idb @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
-
-# 개발
-npm install -D vite @vitejs/plugin-react netlify-cli
-
-# Netlify Functions (서버사이드)
-npm install @anthropic-ai/sdk
+cd processflow
+npm install
 ```
 
----
-
-## 🏗 아키텍처
-
-```
-┌─────────────────────────────────────────────┐
-│              브라우저 (React SPA)              │
-│                                             │
-│  ┌─────────────────┐  ┌──────────────────┐  │
-│  │  LocalStorage   │  │    IndexedDB     │  │
-│  │  텍스트 데이터    │  │  이미지 Blob 데이터 │  │
-│  │  (processflow_v1│  │ (processflow_    │  │
-│  │   ~3MB 이내)    │  │  images, 수백MB) │  │
-│  └─────────────────┘  └──────────────────┘  │
-└──────────────────┬──────────────────────────┘
-                   │ AI 기능 사용 시만
-                   ▼
-     ┌─────────────────────────┐
-     │    Netlify Functions    │  ← API 키 여기서만 보관
-     │    /.netlify/functions  │     (ANTHROPIC_API_KEY)
-     │        /claude          │
-     └─────────────┬───────────┘
-                   │
-                   ▼
-     ┌─────────────────────────┐
-     │  Anthropic Claude API   │
-     │  (claude-sonnet-4-...)  │
-     └─────────────────────────┘
+**Development (without AI)**:
+```bash
+npm run dev
 ```
 
-### 데이터 계층 구조
+**Development (with AI via Netlify Dev)**:
+```bash
+# Set environment variable
+# Create .env in processflow/ with: ANTHROPIC_API_KEY=sk-ant-...
 
-```
-Department (부서)
-  └─ Group (그룹)
-       └─ Process (프로세스)
-            └─ Step (단계)
-                 └─ Image (이미지 참조 — id만 저장, 실데이터는 IndexedDB)
+npx netlify dev
 ```
 
----
+The app opens at `http://localhost:5173` (Vite) or `http://localhost:8888` (Netlify Dev).
 
-## ✨ 주요 기능
+### Build
 
-### 화면 구조 (3단계 뷰)
+```bash
+npm run build
+npm run preview
+```
 
-| 뷰 | 진입 조건 | 주요 기능 |
-|----|----------|-----------|
-| **LV1** 부서 목록 | 부서 선택 | 그룹 카드 목록, 그룹 추가/삭제 |
-| **LV2** 프로세스 그룹 | 그룹 선택 | 프로세스 카드, 부서별 Work flow, Word 내보내기 |
-| **LV3** 프로세스 상세 | 프로세스 선택 | LinearFlow, 단계별 상세, 단계 추가/수정/삭제 |
-
-### 기능 목록
-
-| 구분 | 기능 | 상태 |
-|------|------|------|
-| **v1 필수** | 부서/그룹/프로세스 CRUD | ✅ |
-| | 단계 추가/수정/삭제 | ✅ |
-| | 그룹/프로세스 정보 수정 (수정 모달) | ✅ |
-| | 그룹 부서 이동 | ✅ |
-| | 이미지 첨부 (IndexedDB 저장) | ✅ |
-| | LinearFlow 다이어그램 | ✅ |
-| | 부서별 Work flow (SwimLane) 다이어그램 | ✅ |
-| | 사이드바 네비게이션 (LV1/LV2) | ✅ |
-| | LocalStorage 자동 저장 | ✅ |
-| | 삭제 확인 팝업 | ✅ |
-| | 그룹 단위 Word 내보내기 | ✅ |
-| **AI 기능** | AI 프로세스 자동 구조화 (3단계 위저드) | ✅ |
-| | 직접 입력 방식 | ✅ |
-| | Netlify Functions API 프록시 (JSON 재시도 3회) | ✅ |
-| **v1.5** | 병렬 분기·합류 다이어그램 (colIndex 기반) | ✅ |
-| | 단계 순서 드래그 변경 (@dnd-kit) | ✅ |
-| | 그룹 추가 시 부서 존재 검증 | ✅ |
-| | 병렬 스텝 동일 번호 표시 | ✅ |
-| **코드 품질** | ID 기반 파생 상태 (수동 동기화 제거) | ✅ |
-| | 모달 공통화 (ModalBase 통일) | ✅ |
-| | Word Export 모듈 분리 | ✅ |
-| | architecture-guard 구조 점검 스킬 | ✅ |
-| **v2 권장** | JSON 백업/복원 | 🔲 |
-| | 이미지 자동 리사이즈 | 🔲 |
-| **v3 추후** | Azure Cosmos DB + Blob Storage 연동 | 🔲 |
-| | Azure AD 사용자 인증 | 🔲 |
-
----
-
-## 📁 프로젝트 구조
+## Project Structure
 
 ```
 processflow/
-├── src/
-│   ├── App.jsx              # 메인 앱, 전역 상태 관리
-│   ├── constants.js         # 색상 토큰(C), SAMPLE_DATA, CLAUDE_MODEL
-│   ├── storage.js           # LocalStorage read/write
-│   ├── imageDB.js           # IndexedDB 이미지 CRUD
-│   ├── wordExport.js        # Word(.docx) 생성 로직 (섹션 빌더)
-│   ├── wordExport.helpers.js # Word 상수·셀 헬퍼 함수
-│   └── components/
-│       ├── layout/
-│       │   ├── TopNav.jsx
-│       │   └── Sidebar.jsx
-│       ├── views/
-│       │   ├── LV1View.jsx
-│       │   ├── LV2View.jsx
-│       │   └── LV3View.jsx
-│       ├── diagrams/
-│       │   ├── LinearFlow.jsx
-│       │   └── SwimLane.jsx
-│       ├── cards/
-│       │   └── StepCard.jsx
-│       └── modals/
-│           ├── ModalBase.jsx          # 모달 공통 래퍼 (ESC·배경클릭·접근성)
-│           ├── AddModal.jsx
-│           ├── AddMethodModal.jsx
-│           ├── AIGenerateModal.jsx
-│           ├── EditProcModal.jsx
-│           ├── EditGroupModal.jsx
-│           ├── StepModal.jsx
-│           ├── DeleteConfirmModal.jsx
-│           └── ExportModal.jsx
-├── netlify/
-│   └── functions/
-│       └── claude.js        # Claude API 프록시 (API 키 서버사이드)
-├── Phase/
-│   ├── Phase0_환경설정.md           # ✅ 완료
-│   ├── Phase1_저장소레이어.md        # ✅ 완료
-│   ├── Phase2_스킬생성_앱골격.md     # ✅ 완료
-│   ├── Phase3_CRUD_삭제핸들러.md     # ✅ 완료
-│   ├── Phase4_다이어그램.md          # ✅ 완료
-│   ├── Phase5_Word내보내기.md        # ✅ 완료
-│   ├── Phase6_AI자동구조화.md        # ✅ 완료
-│   ├── Phase7_통합테스트_배포.md     # ✅ 완료
-│   ├── Phase8_병렬분기다이어그램.md   # ✅ 완료
-│   ├── Phase9_드래그앤드롭_UX개선.md  # ✅ 완료
-│   └── Phase10_코드구조점검_리팩토링.md # ✅ 완료
-├── Pre-Requirement/
-│   └── ProcessFlow_개발명세서.txt    # v1.3
-├── netlify.toml             # Netlify 빌드 설정
-├── .env.local               # 로컬 개발용 환경변수 (gitignore)
-└── README.md
+├── index.html                  # Entry HTML
+├── package.json                # Dependencies and scripts
+├── vite.config.js              # Vite configuration
+├── netlify.toml                # Netlify build & function config
+├── netlify/functions/
+│   └── claude.js               # Claude API serverless proxy
+├── public/
+│   ├── favicon.svg
+│   └── icons.svg
+└── src/
+    ├── main.jsx                # React entry point
+    ├── App.jsx                 # Root component, state, navigation
+    ├── constants.js            # Color tokens, sample data, model config
+    ├── storage.js              # localStorage read/write
+    ├── imageDB.js              # IndexedDB image blob CRUD
+    ├── wordExport.js           # Word document generation (cover, flow, steps)
+    ├── wordExport.helpers.js   # Word builder helper utilities
+    ├── hooks/
+    │   └── useIsMobile.js      # Mobile breakpoint hook
+    ├── styles/
+    │   └── modalStyles.js      # Shared modal style objects
+    └── components/
+        ├── ErrorBoundary.jsx   # React error boundary
+        ├── layout/
+        │   ├── TopNav.jsx      # Top navigation bar
+        │   └── Sidebar.jsx     # Collapsible sidebar (overlay on mobile)
+        ├── views/
+        │   ├── LV1View.jsx     # Department overview (card grid)
+        │   ├── LV2View.jsx     # Process group list
+        │   └── LV3View.jsx     # Step detail + diagrams
+        ├── cards/
+        │   └── StepCard.jsx    # Individual step card
+        ├── diagrams/
+        │   ├── LinearFlow.jsx  # Linear flow diagram (a → b → c)
+        │   └── SwimLane.jsx    # Swim lane diagram (by department)
+        └── modals/
+            ├── ModalBase.jsx         # Shared modal wrapper
+            ├── AddModal.jsx          # Add dept/group/process
+            ├── StepModal.jsx         # Add/edit step
+            ├── DeleteConfirmModal.jsx # Delete confirmation
+            ├── ExportModal.jsx       # Word export dialog
+            ├── AddMethodModal.jsx    # Choose manual vs AI add
+            ├── AIGenerateModal.jsx   # AI generation wizard
+            ├── EditProcModal.jsx     # Edit process metadata
+            └── EditGroupModal.jsx    # Edit group name
 ```
 
----
+## Documentation
 
-## 🚀 개발 Phase 계획
+| Document | Description |
+|---|---|
+| `Phase/Phase0_환경설정.md` | Project setup (Vite, React, ESLint) |
+| `Phase/Phase1_저장소레이어.md` | Storage layer (localStorage + IndexedDB) |
+| `Phase/Phase2_스킬생성_앱골격.md` | App skeleton, navigation, skill generation |
+| `Phase/Phase3_CRUD_삭제핸들러.md` | CRUD operations, cascade delete handlers |
+| `Phase/Phase4_다이어그램.md` | Linear flow and swim lane diagrams |
+| `Phase/Phase5_Word내보내기.md` | Word (.docx) export with cover page and tables |
+| `Phase/Phase6_AI자동구조화.md` | AI auto-generation via Claude API |
+| `Phase/Phase7_통합테스트_배포.md` | Integration testing and Netlify deployment |
+| `Phase/Phase8_병렬분기다이어그램.md` | Parallel branch/merge in swim lane diagrams |
+| `Phase/Phase9_드래그앤드롭_UX개선.md` | Drag-and-drop reordering, UX improvements |
+| `Phase/Phase10_코드구조점검_리팩토링.md` | Code structure review and refactoring |
 
-| Phase | 내용 | 상태 |
-|-------|------|------|
-| **Phase 0** | 프로젝트 환경 설정 (Vite, 패키지, constants.js) | ✅ 완료 |
-| **Phase 1** | 저장소 레이어 (storage.js, imageDB.js, App 상태) | ✅ 완료 |
-| **Phase 2** | 스킬 생성 + 앱 골격 + 네비게이션 | ✅ 완료 |
-| **Phase 3** | CRUD + 삭제 핸들러 (IndexedDB 정합성 포함) | ✅ 완료 |
-| **Phase 4** | 다이어그램 (LinearFlow + 부서별 Work flow) | ✅ 완료 |
-| **Phase 5** | Word 내보내기 (docx 생성 + 이미지 삽입) | ✅ 완료 |
-| **Phase 6** | AI 자동 구조화 (Netlify Functions + 위저드) + 그룹/프로세스 수정 | ✅ 완료 |
-| **Phase 7** | 통합 테스트 + Netlify 배포 | ✅ 완료 |
-| **Phase 8** | 병렬 분기·합류 다이어그램 (colIndex 기반 SwimLane) | ✅ 완료 |
-| **Phase 9** | 드래그 앤 드롭 순서 변경 + UX 개선 (@dnd-kit, 부서 검증, 병렬 번호) | ✅ 완료 |
-| **Phase 10** | 코드 구조 점검 + 리팩토링 (architecture-guard, ID 파생 상태, 모듈 분리) | ✅ 완료 |
+## Current Status
 
-> 상세 내용은 [`Phase/`](./Phase/) 디렉토리 참고
+All development phases are complete.
 
----
+| Phase | Status | Deliverable |
+|---|---|---|
+| 0 — Project setup | ✅ Done | Vite + React + ESLint scaffold |
+| 1 — Storage layer | ✅ Done | localStorage (text) + IndexedDB (images) persistence |
+| 2 — App skeleton & navigation | ✅ Done | TopNav, Sidebar, LV1/LV2/LV3 view switching |
+| 3 — CRUD & delete handlers | ✅ Done | Full CRUD with cascade delete across all hierarchy levels |
+| 4 — Diagrams | ✅ Done | LinearFlow + SwimLane department-based diagrams |
+| 5 — Word export | ✅ Done | .docx generation with cover page, step tables, embedded images |
+| 6 — AI auto-generation | ✅ Done | Claude API proxy + 3-step wizard for step structure generation |
+| 7 — Integration test & deploy | ✅ Done | Manual test scenarios (T01–T08), Netlify deployment |
+| 8 — Parallel branch diagrams | ✅ Done | colIndex-based parallel branch/merge in SwimLane |
+| 9 — Drag-and-drop & UX | ✅ Done | @dnd-kit step reordering, department validation, parallel numbering |
+| 10 — Code review & refactoring | ✅ Done | ID-based derived state, ModalBase extraction, wordExport module split |
 
-## ⚙️ 로컬 개발 환경 설정
+## Limitations
 
-```bash
-# 1. 저장소 클론
-git clone <repo-url>
-cd processflow
-
-# 2. 패키지 설치
-npm install
-
-# 3. 환경변수 설정
-cp .env.example .env.local
-# .env.local에 ANTHROPIC_API_KEY 입력
-
-# 4. 개발 서버 실행 (React + Netlify Functions 동시)
-netlify dev
-# → http://localhost:8888
-```
-
-> ⚠️ `npm start` 또는 `npm run dev` 로는 AI 기능 동작 안 함
-> AI 기능 포함 테스트는 반드시 `netlify dev` 사용
+- **No backend database** — all data lives in the browser (localStorage + IndexedDB). Clearing browser data deletes everything.
+- **No authentication** — single-user, local-only.
+- **No automated tests** — validation was performed through manual test scenarios.
+- **AI feature requires API key** — the `ANTHROPIC_API_KEY` environment variable must be set for the AI auto-generation to work.
+- **Mobile support** — responsive layout is implemented, but the primary target is desktop browsers.
 
 ---
 
-## 🔒 보안 주의사항
-
-- `ANTHROPIC_API_KEY`는 **Netlify 대시보드 환경변수**에만 설정
-- `.env.local`은 로컬 전용 — `.gitignore`에 포함됨
-- 클라이언트 코드에 API 키 직접 작성 절대 금지
-- 모든 Claude API 호출은 `/.netlify/functions/claude` 경유
-
----
-
-## 🗄 v2 추후 계획 (Azure 연동)
-
-| 현재 (v1) | v2 목표 |
-|-----------|---------|
-| LocalStorage | Azure Cosmos DB (NoSQL) |
-| IndexedDB | Azure Blob Storage |
-| 인증 없음 | Azure AD |
-
-> 마이그레이션 전략: `saveToStorage()` / `saveImage()` 함수 시그니처 유지,
-> 내부 구현만 Azure SDK로 교체
-
----
-
-## 📝 변경 이력
-
-| 날짜 | 버전 | 내용 |
-|------|------|------|
-| 2026-03-23 | v2.5 | Phase 10 — architecture-guard 스킬 생성, App.jsx ID 기반 파생 상태 전환 (550→487줄, 동기화 버그 원천 차단), Escape 핸들러 ModalBase 통일, wordExport 모듈 분리 (597→455줄), 삭제 아이콘 SVG 교체 |
-| 2026-03-20 | v2.4 | 코드 품질 개선 — ModalBase 공통 컴포넌트 추출 (모달 8개 스타일 중복 제거), ErrorBoundary, 접근성(Escape 닫기, role="dialog"), Blob URL 메모리 누수 수정 |
-| 2026-03-20 | v2.3 | Phase 9 완료 — @dnd-kit 드래그 앤 드롭 단계 순서 변경, colIndex 1-based, 그룹 부서 검증, 병렬 스텝 동일 번호 |
-| 2026-03-20 | v2.2 | Phase 8 완료 — SwimLane 병렬 분기·합류 다이어그램, colIndex 기반 열 배치, SVG 오버레이 화살표, StepModal Step 필드 |
-| 2026-03-18 | v2.1 | Phase 7 완료 — Netlify 배포 (processflow-generator.netlify.app), Word 템플릿 v7 기준 전면 재작성, 사용자 테스트 완료 |
-| 2026-03-16 | v2.0 | UI 전체 개선 — 카드 좌측 강조선 + 박스 그림자, LV2 프로세스 카드 태그/순번 뱃지, LV3 헤더 카드화, StepCard 정보 3칸 그리드 + 섹션 구분, 주의사항 단계 노란 강조 |
-| 2026-03-16 | v1.9 | Phase 6 완료 — AI 자동 구조화 (AddMethodModal, AIGenerateModal, claude.js), 그룹/프로세스 수정 모달, LV1~LV3 수정 버튼, selDept/selGroup/selProc 동기화 버그 수정 |
-| 2026-03-16 | v1.8 | Phase 5 완료 — wordExport.js + ExportModal.jsx, Word 파일 생성 + 이미지 삽입. ExportModal 문서 구성 파트 제거 |
-| 2026-03-16 | v1.7 | Phase 4 완료 — LinearFlow/부서별 Work flow 다이어그램, LV3View/LV2View 연결, 뒤로가기 상태 동기화 버그 수정 |
-| 2026-03-16 | v1.6 | Phase 3 완료 — 전체 CRUD UI, AddModal/StepModal/DeleteConfirmModal, 삭제 핸들러 4종, StepCard |
-| 2026-03-13 | v1.5 | Phase 2 완료 — 스킬 5개, TopNav/Sidebar/LV1·2·3View, 뷰 전환 로직 |
-| 2026-03-13 | v1.4 | Phase 0·1 완료 — Vite+React 셋업, storage.js, imageDB.js, App 전역 상태 |
-| 2026-03-13 | v1.3 | 아키텍처 확정 (Netlify Functions, IndexedDB 분리, CLAUDE_MODEL 상수화) |
-| 2026-03-13 | v1.2 | 최초 명세서 작성 |
+<p align="center">Made with AI-assisted development</p>

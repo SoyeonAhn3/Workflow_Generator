@@ -24,6 +24,9 @@ interview/
 Thumbs.db
 desktop.ini
 
+# Old README
+README_old.md
+
 # 에디터
 .vscode/
 *.swp

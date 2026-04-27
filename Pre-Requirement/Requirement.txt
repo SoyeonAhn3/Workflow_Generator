@@ -116,7 +116,7 @@ Top Navigation
 우측 블록 에디터
 
 단계명 인라인 편집
-태그 선택 드롭다운 (확인 / SAP / 검증 / 문서 / 승인)
+태그 선택 드롭다운 (확인 / 시스템 / 검증 / 문서 / 승인)
 상세 설명 텍스트에어리어
 이미지 다중 첨부: 파일 선택 → Base64 변환 → 썸네일 미리보기 → 개별 삭제
 💡 참고사항 입력
@@ -150,7 +150,7 @@ ID분류기능명설명우선순위F01프로세스새 프로세스 생성제목�
 입력: 프로세스 제목 + 담당 부서 + 자연어 업무 흐름 텍스트
 처리: Claude API 호출 → JSON만 반환하도록 프롬프트 설계 → 응답 파싱
 출력 JSON 스키마:
-필드타입설명idstring단계 고유 IDtitlestring단계명 (20자 이내 권장)deptstring담당 부서 (입력값 기본)tagenum확인 | SAP | 검증 | 문서 | 승인ptstring처리 시간 (예: 30min)ltstring리드 타임 (예: 1day, -)descriptionstring단계 상세 설명warningstring주의사항 (없으면 빈 문자열)
+필드타입설명idstring단계 고유 IDtitlestring단계명 (20자 이내 권장)deptstring담당 부서 (입력값 기본)tagenum확인 | 시스템 | 검증 | 문서 | 승인ptstring처리 시간 (예: 30min)ltstring리드 타임 (예: 1day, -)descriptionstring단계 상세 설명warningstring주의사항 (없으면 빈 문자열)
 
 5. 데이터 모델
 5.1 Process
