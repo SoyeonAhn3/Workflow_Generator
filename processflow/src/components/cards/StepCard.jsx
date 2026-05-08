@@ -37,11 +37,7 @@ export default function StepCard({ step, index, onEdit, onDelete, dragHandleProp
     }
   }, [])
 
-  const handleDelete = () => {
-    if (window.confirm(`"${step.title}" 단계를 삭제하시겠습니까?`)) {
-      onDelete()
-    }
-  }
+  const handleDelete = () => onDelete(step)
 
   const hasWarning = !!step.warning
 
@@ -120,7 +116,7 @@ export default function StepCard({ step, index, onEdit, onDelete, dragHandleProp
         {/* 액션 버튼 */}
         <div style={{ display: 'flex', gap: 6, flexShrink: 0, alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
           <button onClick={onEdit} style={editIconStyle} title="수정">✏️</button>
-          <button onClick={handleDelete} style={deleteIconStyle} title="삭제">🗑</button>
+          <button onClick={handleDelete} style={deleteIconStyle} title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M5 6v14a2 2 0 002 2h10a2 2 0 002-2V6"/><path d="M10 11v6M14 11v6"/></svg></button>
         </div>
 
         {/* 펼치기 */}

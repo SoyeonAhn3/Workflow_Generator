@@ -7,6 +7,7 @@ import { btnPrimaryStyle, btnSecondaryStyle } from '../../styles/modalStyles'
 export default function ExportModal({ group, deptName, onClose }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [warning, setWarning] = useState(null)
 
   const totalSteps = group.processes.reduce((s, p) => s + (p.steps?.length || 0), 0)
 
@@ -14,8 +15,12 @@ export default function ExportModal({ group, deptName, onClose }) {
     setLoading(true)
     setError(null)
     try {
-      await generateGroupWord(group, deptName)
-      onClose()
+      const result = await generateGroupWord(group, deptName)
+      if (result?.skippedImages > 0) {
+        setWarning(`이미지 ${result.skippedImages}개가 포함되지 않았습니다. (로드 실패)`)
+      } else {
+        onClose()
+      }
     } catch (err) {
       setError("생성 중 오류가 발생했습니다. 다시 시도해 주세요.")
     } finally {
@@ -58,6 +63,16 @@ export default function ExportModal({ group, deptName, onClose }) {
           </div>
         ))}
       </div>
+
+      {warning && (
+        <div style={{
+          background: C.warningBg, border: `1px solid ${C.warningBorder}`,
+          borderRadius: 8, padding: '10px 14px', marginBottom: 16,
+          fontSize: 13, color: C.warning,
+        }}>
+          ⚠️ {warning}
+        </div>
+      )}
 
       {error && (
         <div style={{

@@ -225,7 +225,7 @@ export default function LV3View({ dept, group, proc, onDeleteProc, onEditProc, o
                 step={step}
                 index={getStepNumber(step) - 1}
                 onEdit={() => onEditStep(step)}
-                onDelete={() => onDeleteStep(step)}
+                onDelete={onDeleteStep}
               />
             ))}
 
