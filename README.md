@@ -176,16 +176,16 @@ processflow/
 │   └── functions/
 │       └── claude.js        # Claude API 프록시 (API 키 서버사이드)
 ├── Phase/
-│   ├── Phase0_환경설정.md           # ✅ 완료
-│   ├── Phase1_저장소레이어.md        # ✅ 완료
-│   ├── Phase2_스킬생성_앱골격.md     # ✅ 완료
-│   ├── Phase3_CRUD_삭제핸들러.md     # ✅ 완료
-│   ├── Phase4_다이어그램.md          # ✅ 완료
-│   ├── Phase5_Word내보내기.md        # ✅ 완료
-│   ├── Phase6_AI자동구조화.md        # ✅ 완료
-│   ├── Phase7_통합테스트_배포.md     # ✅ 완료
-│   ├── Phase8_병렬분기다이어그램.md   # ✅ 완료
-│   └── Phase9_드래그앤드롭_UX개선.md  # ✅ 완료
+│   ├── Phase0_ProjectSetup.md                  # ✅ Completed
+│   ├── Phase1_StorageLayer.md                  # ✅ Completed
+│   ├── Phase2_SkillCreation_AppSkeleton.md     # ✅ Completed
+│   ├── Phase3_CRUD_DeleteHandlers.md           # ✅ Completed
+│   ├── Phase4_Diagrams.md                      # ✅ Completed
+│   ├── Phase5_WordExport.md                    # ✅ Completed
+│   ├── Phase6_AIAutoStructure.md               # ✅ Completed
+│   ├── Phase7_IntegrationTest_Deployment.md    # ✅ Completed
+│   ├── Phase8_ParallelBranchDiagram.md         # ✅ Completed
+│   └── Phase9_DragAndDrop_UXImprovement.md     # ✅ Completed
 ├── Pre-Requirement/
 │   └── ProcessFlow_개발명세서.txt    # v1.3
 ├── netlify.toml             # Netlify 빌드 설정
