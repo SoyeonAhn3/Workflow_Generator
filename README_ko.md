@@ -156,17 +156,17 @@ processflow/
 
 | 문서 | 설명 |
 |---|---|
-| `Phase/Phase0_환경설정.md` | 프로젝트 환경 설정 (Vite, React, ESLint) |
-| `Phase/Phase1_저장소레이어.md` | 저장소 레이어 (localStorage + IndexedDB) |
-| `Phase/Phase2_스킬생성_앱골격.md` | 앱 골격, 네비게이션, 스킬 생성 |
-| `Phase/Phase3_CRUD_삭제핸들러.md` | CRUD 작업, 계단식 삭제 핸들러 |
-| `Phase/Phase4_다이어그램.md` | 일렬 흐름도 및 Swim Lane 다이어그램 |
-| `Phase/Phase5_Word내보내기.md` | Word (.docx) 내보내기 (표지 + 테이블) |
-| `Phase/Phase6_AI자동구조화.md` | Claude API를 통한 AI 자동 생성 |
-| `Phase/Phase7_통합테스트_배포.md` | 통합 테스트 및 Netlify 배포 |
-| `Phase/Phase8_병렬분기다이어그램.md` | Swim Lane 다이어그램 병렬 분기/합류 |
-| `Phase/Phase9_드래그앤드롭_UX개선.md` | 드래그 앤 드롭 순서 변경, UX 개선 |
-| `Phase/Phase10_코드구조점검_리팩토링.md` | 코드 구조 점검 및 리팩토링 |
+| `Phase/Phase0_ProjectSetup.md` | 프로젝트 환경 설정 (Vite, React, ESLint) |
+| `Phase/Phase1_StorageLayer.md` | 저장소 레이어 (localStorage + IndexedDB) |
+| `Phase/Phase2_SkillCreation_AppSkeleton.md` | 앱 골격, 네비게이션, 스킬 생성 |
+| `Phase/Phase3_CRUD_DeleteHandlers.md` | CRUD 작업, 계단식 삭제 핸들러 |
+| `Phase/Phase4_Diagrams.md` | 일렬 흐름도 및 Swim Lane 다이어그램 |
+| `Phase/Phase5_WordExport.md` | Word (.docx) 내보내기 (표지 + 테이블) |
+| `Phase/Phase6_AIAutoStructure.md` | Claude API를 통한 AI 자동 생성 |
+| `Phase/Phase7_IntegrationTest_Deployment.md` | 통합 테스트 및 Netlify 배포 |
+| `Phase/Phase8_ParallelBranchDiagram.md` | Swim Lane 다이어그램 병렬 분기/합류 |
+| `Phase/Phase9_DragAndDrop_UXImprovement.md` | 드래그 앤 드롭 순서 변경, UX 개선 |
+| `Phase/Phase10_CodeReview_Refactoring.md` | 코드 구조 점검 및 리팩토링 |
 
 ## 현재 상태
 

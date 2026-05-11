@@ -105,68 +105,73 @@ npm run preview
 
 ```
 processflow/
-├── index.html                  # Entry HTML
-├── package.json                # Dependencies and scripts
-├── vite.config.js              # Vite configuration
-├── netlify.toml                # Netlify build & function config
-├── netlify/functions/
-│   └── claude.js               # Claude API serverless proxy
-├── public/
-│   ├── favicon.svg
-│   └── icons.svg
-└── src/
-    ├── main.jsx                # React entry point
-    ├── App.jsx                 # Root component, state, navigation
-    ├── constants.js            # Color tokens, sample data, model config
-    ├── storage.js              # localStorage read/write
-    ├── imageDB.js              # IndexedDB image blob CRUD
-    ├── wordExport.js           # Word document generation (cover, flow, steps)
-    ├── wordExport.helpers.js   # Word builder helper utilities
-    ├── hooks/
-    │   └── useIsMobile.js      # Mobile breakpoint hook
-    ├── styles/
-    │   └── modalStyles.js      # Shared modal style objects
-    └── components/
-        ├── ErrorBoundary.jsx   # React error boundary
-        ├── layout/
-        │   ├── TopNav.jsx      # Top navigation bar
-        │   └── Sidebar.jsx     # Collapsible sidebar (overlay on mobile)
-        ├── views/
-        │   ├── LV1View.jsx     # Department overview (card grid)
-        │   ├── LV2View.jsx     # Process group list
-        │   └── LV3View.jsx     # Step detail + diagrams
-        ├── cards/
-        │   └── StepCard.jsx    # Individual step card
-        ├── diagrams/
-        │   ├── LinearFlow.jsx  # Linear flow diagram (a → b → c)
-        │   └── SwimLane.jsx    # Swim lane diagram (by department)
-        └── modals/
-            ├── ModalBase.jsx         # Shared modal wrapper
-            ├── AddModal.jsx          # Add dept/group/process
-            ├── StepModal.jsx         # Add/edit step
-            ├── DeleteConfirmModal.jsx # Delete confirmation
-            ├── ExportModal.jsx       # Word export dialog
-            ├── AddMethodModal.jsx    # Choose manual vs AI add
-            ├── AIGenerateModal.jsx   # AI generation wizard
-            ├── EditProcModal.jsx     # Edit process metadata
-            └── EditGroupModal.jsx    # Edit group name
+├── src/
+│   ├── App.jsx              # 메인 앱, 전역 상태 관리
+│   ├── constants.js         # 색상 토큰(C), SAMPLE_DATA, CLAUDE_MODEL
+│   ├── storage.js           # LocalStorage read/write
+│   ├── imageDB.js           # IndexedDB 이미지 CRUD
+│   ├── wordExport.js        # Word(.docx) 생성 로직
+│   └── components/
+│       ├── layout/
+│       │   ├── TopNav.jsx
+│       │   └── Sidebar.jsx
+│       ├── views/
+│       │   ├── LV1View.jsx
+│       │   ├── LV2View.jsx
+│       │   └── LV3View.jsx
+│       ├── diagrams/
+│       │   ├── LinearFlow.jsx
+│       │   └── SwimLane.jsx
+│       ├── cards/
+│       │   ├── GroupCard.jsx
+│       │   ├── ProcessCard.jsx
+│       │   └── StepCard.jsx
+│       └── modals/
+│           ├── AddModal.jsx
+│           ├── AddMethodModal.jsx
+│           ├── AIGenerateModal.jsx
+│           ├── EditProcModal.jsx
+│           ├── EditGroupModal.jsx
+│           ├── StepModal.jsx
+│           ├── DeleteConfirmModal.jsx
+│           └── ExportModal.jsx
+├── netlify/
+│   └── functions/
+│       └── claude.js        # Claude API 프록시 (API 키 서버사이드)
+├── Phase/
+│   ├── Phase0_ProjectSetup.md                  # ✅ Completed
+│   ├── Phase1_StorageLayer.md                  # ✅ Completed
+│   ├── Phase2_SkillCreation_AppSkeleton.md     # ✅ Completed
+│   ├── Phase3_CRUD_DeleteHandlers.md           # ✅ Completed
+│   ├── Phase4_Diagrams.md                      # ✅ Completed
+│   ├── Phase5_WordExport.md                    # ✅ Completed
+│   ├── Phase6_AIAutoStructure.md               # ✅ Completed
+│   ├── Phase7_IntegrationTest_Deployment.md    # ✅ Completed
+│   ├── Phase8_ParallelBranchDiagram.md         # ✅ Completed
+│   ├── Phase9_DragAndDrop_UXImprovement.md     # ✅ Completed
+│   └── Phase10_CodeReview_Refactoring.md       # ✅ Completed
+├── Pre-Requirement/
+│   └── ProcessFlow_개발명세서.txt    # v1.3
+├── netlify.toml             # Netlify 빌드 설정
+├── .env.local               # 로컬 개발용 환경변수 (gitignore)
+└── README.md
 ```
 
 ## Documentation
 
 | Document | Description |
 |---|---|
-| `Phase/Phase0_환경설정.md` | Project setup (Vite, React, ESLint) |
-| `Phase/Phase1_저장소레이어.md` | Storage layer (localStorage + IndexedDB) |
-| `Phase/Phase2_스킬생성_앱골격.md` | App skeleton, navigation, skill generation |
-| `Phase/Phase3_CRUD_삭제핸들러.md` | CRUD operations, cascade delete handlers |
-| `Phase/Phase4_다이어그램.md` | Linear flow and swim lane diagrams |
-| `Phase/Phase5_Word내보내기.md` | Word (.docx) export with cover page and tables |
-| `Phase/Phase6_AI자동구조화.md` | AI auto-generation via Claude API |
-| `Phase/Phase7_통합테스트_배포.md` | Integration testing and Netlify deployment |
-| `Phase/Phase8_병렬분기다이어그램.md` | Parallel branch/merge in swim lane diagrams |
-| `Phase/Phase9_드래그앤드롭_UX개선.md` | Drag-and-drop reordering, UX improvements |
-| `Phase/Phase10_코드구조점검_리팩토링.md` | Code structure review and refactoring |
+| `Phase/Phase0_ProjectSetup.md` | Project setup (Vite, React, ESLint) |
+| `Phase/Phase1_StorageLayer.md` | Storage layer (localStorage + IndexedDB) |
+| `Phase/Phase2_SkillCreation_AppSkeleton.md` | App skeleton, navigation, skill generation |
+| `Phase/Phase3_CRUD_DeleteHandlers.md` | CRUD operations, cascade delete handlers |
+| `Phase/Phase4_Diagrams.md` | Linear flow and swim lane diagrams |
+| `Phase/Phase5_WordExport.md` | Word (.docx) export with cover page and tables |
+| `Phase/Phase6_AIAutoStructure.md` | AI auto-generation via Claude API |
+| `Phase/Phase7_IntegrationTest_Deployment.md` | Integration testing and Netlify deployment |
+| `Phase/Phase8_ParallelBranchDiagram.md` | Parallel branch/merge in swim lane diagrams |
+| `Phase/Phase9_DragAndDrop_UXImprovement.md` | Drag-and-drop reordering, UX improvements |
+| `Phase/Phase10_CodeReview_Refactoring.md` | Code structure review and refactoring |
 
 ## Current Status
 
