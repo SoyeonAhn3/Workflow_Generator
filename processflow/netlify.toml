@@ -3,6 +3,13 @@
   publish = "dist"
   functions = "netlify/functions"
 
+[functions]
+  external_node_modules = ["@anthropic-ai/sdk"]
+  node_bundler = "esbuild"
+
+[functions."claude"]
+  timeout = 26
+
 [dev]
   framework = "#custom"
   command = "npm run dev"

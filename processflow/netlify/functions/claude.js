@@ -61,7 +61,7 @@ export const handler = async (event) => {
         },
         body: JSON.stringify({
           model,
-          max_tokens: 2048,
+          max_tokens: 4096,
           messages: [{ role: "user", content: currentPrompt }],
         }),
       })
