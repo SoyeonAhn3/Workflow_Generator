@@ -12,6 +12,13 @@ https://github.com/user-attachments/assets/cef4d085-daaa-4fec-a5e3-e2a630244b45
 
 조직에서는 월 마감, 예산 검토, 원가 배부 등 반복적인 업무 프로세스를 Word 파일로 수동 관리합니다. ProcessFlow는 이 수작업을 대체합니다. 부서를 정의하고, 관련 프로세스를 그룹으로 묶고, 각 프로세스를 메타데이터(화면명, 담당 부서, 소요 시간, 로직, 주의사항, 스크린샷)가 포함된 단계로 분해한 뒤, 서식이 적용된 `.docx` 파일로 내보냅니다. 선택적으로 Claude API를 활용한 AI 기능으로 자유 텍스트 설명에서 단계 구조를 자동 생성할 수 있습니다.
 
+## Manual
+
+| 언어 | 링크 |
+|---|---|
+| 한국어 | [User Manual](./manuals/20260512_ProcessFlow_매뉴얼.md) |
+| English | [User Manual](./manuals/20260512_ProcessFlow_Manual.md) |
+
 ## 목차
 
 - [동작 흐름](#동작-흐름)

@@ -17,6 +17,7 @@ Organizations maintain dozens of recurring workflows — monthly closings, budge
 | Language | Link |
 |---|---|
 | 한국어 | [User Manual](./manuals/20260512_ProcessFlow_매뉴얼.md) |
+| English | [User Manual](./manuals/20260512_ProcessFlow_Manual.md) |
 
 ## Table of Contents
 
