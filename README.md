@@ -12,6 +12,12 @@ https://github.com/user-attachments/assets/cef4d085-daaa-4fec-a5e3-e2a630244b45
 
 Organizations maintain dozens of recurring workflows — monthly closings, budget reviews, cost allocations — that are documented manually in Word files. ProcessFlow replaces that manual effort: users define departments, group related processes, break each process into ordered steps with metadata (screen name, responsible team, processing time, logic, warnings, screenshots), and export the result as a styled `.docx` file. An optional AI feature can auto-generate step structures from a free-text description via the Claude API.
 
+## Manual
+
+| Language | Link |
+|---|---|
+| 한국어 | [User Manual](./manuals/20260512_ProcessFlow_매뉴얼.md) |
+
 ## Table of Contents
 
 - [How It Works](#how-it-works)
