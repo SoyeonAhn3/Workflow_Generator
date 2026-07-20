@@ -120,6 +120,7 @@ processflow/
 │   ├── wordExport.js        # Word(.docx) 생성 로직
 │   ├── backup.js            # 백업/복원 (JSON 내보내기·불러오기)
 │   ├── imageResize.js       # 이미지 리사이즈 (첨부 시 너비 축소)
+│   ├── *.test.js            # Vitest 스모크 테스트 (storage/backup/wordExport)
 │   └── components/
 │       ├── layout/
 │       │   ├── TopNav.jsx
@@ -160,7 +161,8 @@ processflow/
 │   ├── Phase8_ParallelBranchDiagram.md         # ✅ Completed
 │   ├── Phase9_DragAndDrop_UXImprovement.md     # ✅ Completed
 │   ├── Phase10_CodeReview_Refactoring.md       # ✅ Completed
-│   └── Phase11_BackupRestore.md                # ✅ Completed
+│   ├── Phase11_BackupRestore.md                # ✅ Completed
+│   └── Phase12_QualityStabilization.md         # ✅ Completed
 ├── Pre-Requirement/
 │   └── ProcessFlow_개발명세서.txt    # v1.3
 ├── netlify.toml             # Netlify 빌드 설정
@@ -184,10 +186,11 @@ processflow/
 | `Phase/Phase9_DragAndDrop_UXImprovement.md` | Drag-and-drop reordering, UX improvements |
 | `Phase/Phase10_CodeReview_Refactoring.md` | Code structure review and refactoring |
 | `Phase/Phase11_BackupRestore.md` | JSON backup/restore + image resize on upload |
+| `Phase/Phase12_QualityStabilization.md` | Vitest smoke tests + Word image aspect-ratio preservation |
 
 ## Current Status
 
-All development phases are complete.
+All development phases (0–12) are complete.
 
 | Phase | Status | Deliverable |
 |---|---|---|
@@ -203,6 +206,7 @@ All development phases are complete.
 | 9 — Drag-and-drop & UX | ✅ Done | @dnd-kit step reordering, department validation, parallel numbering |
 | 10 — Code review & refactoring | ✅ Done | ID-based derived state, ModalBase extraction, wordExport module split |
 | 11 — Backup / Restore + Image Resize | ✅ Done | JSON export/import of both stores (overwrite with confirmation) + auto-downscale attached images to 1600px width |
+| 12 — Quality & stabilization | ✅ Done | Vitest smoke tests (storage/backup/wordExport, 9 passing) + Word image aspect-ratio preservation |
 
 ## Limitations
 

@@ -115,6 +115,7 @@ processflow/
 ├── index.html                  # 진입 HTML
 ├── package.json                # 의존성 및 스크립트
 ├── vite.config.js              # Vite 설정
+├── vitest.config.js            # Vitest 테스트 설정
 ├── netlify.toml                # Netlify 빌드 및 함수 설정
 ├── netlify/functions/
 │   └── claude.js               # Claude API 서버리스 프록시
@@ -131,6 +132,7 @@ processflow/
     ├── wordExport.helpers.js   # Word 빌더 헬퍼 유틸리티
     ├── backup.js               # 백업/복원 (JSON 내보내기·불러오기)
     ├── imageResize.js          # 이미지 리사이즈 (첨부 시 너비 축소)
+    ├── *.test.js               # Vitest 스모크 테스트 (storage/backup/wordExport)
     ├── hooks/
     │   └── useIsMobile.js      # 모바일 브레이크포인트 훅
     ├── styles/
@@ -178,10 +180,11 @@ processflow/
 | `Phase/Phase9_DragAndDrop_UXImprovement.md` | 드래그 앤 드롭 순서 변경, UX 개선 |
 | `Phase/Phase10_CodeReview_Refactoring.md` | 코드 구조 점검 및 리팩토링 |
 | `Phase/Phase11_BackupRestore.md` | JSON 백업/복원 + 업로드 시 이미지 리사이즈 |
+| `Phase/Phase12_QualityStabilization.md` | Vitest 스모크 테스트 + Word 이미지 비율 유지 |
 
 ## 현재 상태
 
-모든 개발 Phase가 완료되었습니다.
+모든 개발 Phase(0~12)가 완료되었습니다.
 
 | Phase | 상태 | 산출물 |
 |---|---|---|
@@ -197,6 +200,7 @@ processflow/
 | 9 — 드래그 앤 드롭 및 UX | ✅ 완료 | @dnd-kit 단계 순서 변경, 부서 검증, 병렬 번호 |
 | 10 — 코드 구조 점검 및 리팩토링 | ✅ 완료 | ID 기반 파생 상태, ModalBase 추출, wordExport 모듈 분리 |
 | 11 — 백업 / 복원 + 이미지 리사이즈 | ✅ 완료 | 두 저장소 JSON 내보내기·불러오기(확인창 거쳐 덮어쓰기) + 첨부 이미지 너비 1600px 자동 축소 |
+| 12 — 품질·안정화 | ✅ 완료 | Vitest 스모크 테스트(storage/backup/wordExport 9건 통과) + Word 이미지 비율 유지 |
 
 ## 한계점
 

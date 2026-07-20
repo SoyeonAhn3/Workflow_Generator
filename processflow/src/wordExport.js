@@ -303,12 +303,19 @@ async function buildProcessSection(proc, procIdx, imageMap, addPageBreak) {
           const ab = await record.blob.arrayBuffer()
           const u8 = new Uint8Array(ab)
           const mimeMap = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/bmp': 'bmp' }
+          // 비율 유지: 너비 420 고정, 높이는 원본 비율대로 (크기 확인 실패 시 기존 420×280)
+          let width = 420, height = 280
+          try {
+            const bmp = await createImageBitmap(record.blob)
+            if (bmp.width > 0) height = Math.round(420 * bmp.height / bmp.width)
+            bmp.close?.()
+          } catch { /* 원본 크기 확인 불가 → 기존 고정값 유지 */ }
           imgParas.push(new Paragraph({
             spacing: { before: 100, after: 100 },
             alignment: AlignmentType.CENTER,
             children: [new ImageRun({
               data: u8,
-              transformation: { width: 420, height: 280 },
+              transformation: { width, height },
               type: mimeMap[record.blob.type] || 'png',
             })],
           }))
