@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { C } from '../../constants'
 import { saveImage, deleteImage, loadImage } from '../../imageDB'
+import { resizeImageFile } from '../../imageResize'
 import ModalBase, { ModalButtons } from './ModalBase'
 import { labelStyle, inputStyle, btnPrimaryStyle, btnSecondaryStyle } from '../../styles/modalStyles'
 
@@ -54,7 +55,8 @@ export default function StepModal({ mode, step, onSave, onClose }) {
   const handleImageAdd = async (e) => {
     const files = Array.from(e.target.files || [])
     for (const file of files) {
-      const blob = new Blob([await file.arrayBuffer()], { type: file.type })
+      // F19: 첨부 시 너비 1600px 기준 축소 (PNG 유지, 그 외 JPEG) — 실패 시 원본
+      const blob = await resizeImageFile(file, { maxWidth: 1600 })
       const id = 'img_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6)
       await saveImage(id, blob, file.name)
       const url = URL.createObjectURL(blob)

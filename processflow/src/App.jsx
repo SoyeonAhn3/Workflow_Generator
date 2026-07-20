@@ -16,7 +16,9 @@ import AddMethodModal from './components/modals/AddMethodModal.jsx'
 import AIGenerateModal from './components/modals/AIGenerateModal.jsx'
 import EditProcModal from './components/modals/EditProcModal.jsx'
 import EditGroupModal from './components/modals/EditGroupModal.jsx'
+import RestoreConfirmModal from './components/modals/RestoreConfirmModal.jsx'
 import ErrorBoundary from './components/ErrorBoundary.jsx'
+import { exportBackup, parseBackup, applyBackup, summarizeBackup } from './backup.js'
 
 export default function App() {
   const isMobile = useIsMobile()
@@ -47,6 +49,7 @@ export default function App() {
   const [aiModal,     setAiModal]     = useState(false)
   const [editProcModal,  setEditProcModal]  = useState(null) // proc object
   const [editGroupModal, setEditGroupModal] = useState(null) // group object
+  const [restorePreview, setRestorePreview] = useState(null) // { parsed, summary } | null
 
   // ── 뷰 결정 (URL 없음 — 선택 상태로만 판단) ──────────────
   const view = selProc ? 'lv3' : selGroup ? 'lv2' : 'lv1'
@@ -342,6 +345,45 @@ export default function App() {
   }
 
   // ══════════════════════════════════════════════════════════
+  // ── 백업 / 복원 핸들러 (F18) ──────────────────────────────
+  // ══════════════════════════════════════════════════════════
+
+  // 백업: 현재 데이터 전체를 .json 파일로 다운로드
+  const handleBackup = async () => {
+    try {
+      await exportBackup(data)
+    } catch (e) {
+      alert('백업 파일 생성에 실패했습니다: ' + e.message)
+    }
+  }
+
+  // 복원 1단계: 파일 파싱 → 확인창 표시 (아직 덮어쓰지 않음)
+  const handleRestoreFile = async (file) => {
+    try {
+      const parsed = await parseBackup(file)
+      setRestorePreview({ parsed, summary: summarizeBackup(parsed) })
+    } catch (e) {
+      alert('복원할 수 없습니다: ' + e.message)
+    }
+  }
+
+  // 복원 2단계: 확인 후 실제 덮어쓰기
+  const handleRestoreConfirm = async () => {
+    if (!restorePreview) return
+    try {
+      const nextData = await applyBackup(restorePreview.parsed)
+      setData(nextData)
+      setSelDeptId(null)
+      setSelGroupId(null)
+      setSelProcId(null)
+      setRestorePreview(null)
+      alert('복원이 완료되었습니다.')
+    } catch (e) {
+      alert('복원 중 오류가 발생했습니다: ' + e.message)
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════
   // ── 렌더링 ──────────────────────────────────────────────
   // ══════════════════════════════════════════════════════════
 
@@ -368,6 +410,8 @@ export default function App() {
         onSelectGroup={handleSelectGroup}
         onToggleDept={handleToggleDept}
         onAddDept={() => setAddModal('dept')}
+        onBackup={handleBackup}
+        onRestore={handleRestoreFile}
         onClose={() => setSidebarOpen(false)}
       />
 
@@ -442,7 +486,7 @@ export default function App() {
 
       {deleteModal && (
         <DeleteConfirmModal
-          targetName={deleteModal.target.name}
+          targetName={deleteModal.target.name || deleteModal.target.title || ''}
           targetType={deleteModal.type}
           childInfo={deleteModal.childInfo}
           onConfirm={handleDeleteConfirm}
@@ -495,6 +539,14 @@ export default function App() {
           allDepts={data}
           onSave={handleEditGroupSave}
           onClose={() => setEditGroupModal(null)}
+        />
+      )}
+
+      {restorePreview && (
+        <RestoreConfirmModal
+          summary={restorePreview.summary}
+          onConfirm={handleRestoreConfirm}
+          onClose={() => setRestorePreview(null)}
         />
       )}
     </div>

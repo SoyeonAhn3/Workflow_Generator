@@ -118,6 +118,8 @@ processflow/
 │   ├── storage.js           # LocalStorage read/write
 │   ├── imageDB.js           # IndexedDB 이미지 CRUD
 │   ├── wordExport.js        # Word(.docx) 생성 로직
+│   ├── backup.js            # 백업/복원 (JSON 내보내기·불러오기)
+│   ├── imageResize.js       # 이미지 리사이즈 (첨부 시 너비 축소)
 │   └── components/
 │       ├── layout/
 │       │   ├── TopNav.jsx
@@ -141,7 +143,8 @@ processflow/
 │           ├── EditGroupModal.jsx
 │           ├── StepModal.jsx
 │           ├── DeleteConfirmModal.jsx
-│           └── ExportModal.jsx
+│           ├── ExportModal.jsx
+│           └── RestoreConfirmModal.jsx
 ├── netlify/
 │   └── functions/
 │       └── claude.js        # Claude API 프록시 (API 키 서버사이드)
@@ -156,7 +159,8 @@ processflow/
 │   ├── Phase7_IntegrationTest_Deployment.md    # ✅ Completed
 │   ├── Phase8_ParallelBranchDiagram.md         # ✅ Completed
 │   ├── Phase9_DragAndDrop_UXImprovement.md     # ✅ Completed
-│   └── Phase10_CodeReview_Refactoring.md       # ✅ Completed
+│   ├── Phase10_CodeReview_Refactoring.md       # ✅ Completed
+│   └── Phase11_BackupRestore.md                # ✅ Completed
 ├── Pre-Requirement/
 │   └── ProcessFlow_개발명세서.txt    # v1.3
 ├── netlify.toml             # Netlify 빌드 설정
@@ -179,6 +183,7 @@ processflow/
 | `Phase/Phase8_ParallelBranchDiagram.md` | Parallel branch/merge in swim lane diagrams |
 | `Phase/Phase9_DragAndDrop_UXImprovement.md` | Drag-and-drop reordering, UX improvements |
 | `Phase/Phase10_CodeReview_Refactoring.md` | Code structure review and refactoring |
+| `Phase/Phase11_BackupRestore.md` | JSON backup/restore + image resize on upload |
 
 ## Current Status
 
@@ -197,10 +202,11 @@ All development phases are complete.
 | 8 — Parallel branch diagrams | ✅ Done | colIndex-based parallel branch/merge in SwimLane |
 | 9 — Drag-and-drop & UX | ✅ Done | @dnd-kit step reordering, department validation, parallel numbering |
 | 10 — Code review & refactoring | ✅ Done | ID-based derived state, ModalBase extraction, wordExport module split |
+| 11 — Backup / Restore + Image Resize | ✅ Done | JSON export/import of both stores (overwrite with confirmation) + auto-downscale attached images to 1600px width |
 
 ## Limitations
 
-- **No backend database** — all data lives in the browser (localStorage + IndexedDB). Clearing browser data deletes everything.
+- **No backend database** — all data lives in the browser (localStorage + IndexedDB). Clearing browser data deletes everything, though the built-in **Backup / Restore** (JSON export & import) lets you save and recover your data.
 - **No authentication** — single-user, local-only.
 - **No automated tests** — validation was performed through manual test scenarios.
 - **AI feature requires API key** — the `ANTHROPIC_API_KEY` environment variable must be set for the AI auto-generation to work.

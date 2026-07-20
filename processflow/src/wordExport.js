@@ -1,6 +1,6 @@
 import {
   Document, Packer, Paragraph, Table, TableRow, TableCell,
-  WidthType, AlignmentType, ImageRun,
+  WidthType, AlignmentType, ImageRun, BorderStyle,
   VerticalAlign, ShadingType, PageBreak,
 } from 'docx'
 import { saveAs } from 'file-saver'
@@ -12,6 +12,9 @@ import {
   grayBdr, noneBdr, warnBdr, imgHdrBdr, imgBodyBdr,
   txt, gap, labelCell, headerCell, valueCell, placeholderCell,
 } from './wordExport.helpers.js'
+
+// 셀 여백 단위 (helpers의 STD_M/HDR_M과 동일 패턴) — 인라인 margins에서 사용
+const m = WidthType.DXA
 
 // ══════════════════════════════════════════════════════════════
 // [1] 표지

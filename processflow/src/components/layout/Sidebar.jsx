@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { C, DEPT_COLORS } from '../../constants'
 
 /**
@@ -15,10 +16,20 @@ export default function Sidebar({
   onSelectGroup,
   onToggleDept,
   onAddDept,
+  onBackup,
+  onRestore,
   onClose,
 }) {
   const totalGroups = data.reduce((s, d) => s + d.groups.length, 0)
   const totalProcs  = data.reduce((s, d) => s + d.groups.reduce((ss, g) => ss + g.processes.length, 0), 0)
+
+  // 복원용 숨김 파일 입력
+  const fileInputRef = useRef(null)
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    e.target.value = '' // 같은 파일 재선택 가능하도록 초기화
+    if (file) onRestore(file)
+  }
 
   const sidebarWidth = isMobile ? 260 : (open ? 220 : 48)
   const isVisible = isMobile ? open : true
@@ -216,9 +227,49 @@ export default function Sidebar({
             >
               + 부서 추가
             </button>
+
+            {/* 데이터 백업 / 복원 */}
+            <div style={{
+              display: 'flex', gap: 6, marginTop: 8,
+              paddingTop: 10, borderTop: `1px solid ${C.border}`,
+            }}>
+              <button
+                onClick={onBackup}
+                title="전체 데이터를 파일로 내보내기"
+                style={backupBtnStyle}
+              >
+                ⬇ 백업
+              </button>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                title="백업 파일에서 데이터 복원 (덮어쓰기)"
+                style={backupBtnStyle}
+              >
+                ⬆ 복원
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="application/json,.json"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+              />
+            </div>
           </div>
         )}
       </div>
     </>
   )
+}
+
+const backupBtnStyle = {
+  flex: 1,
+  height: 30,
+  background: 'none',
+  border: `1px solid ${C.border}`,
+  borderRadius: 6,
+  cursor: 'pointer',
+  fontSize: 11,
+  fontWeight: 600,
+  color: C.gray500,
 }

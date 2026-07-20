@@ -129,6 +129,8 @@ processflow/
     ├── imageDB.js              # IndexedDB 이미지 Blob CRUD
     ├── wordExport.js           # Word 문서 생성 (표지, 흐름도, 단계)
     ├── wordExport.helpers.js   # Word 빌더 헬퍼 유틸리티
+    ├── backup.js               # 백업/복원 (JSON 내보내기·불러오기)
+    ├── imageResize.js          # 이미지 리사이즈 (첨부 시 너비 축소)
     ├── hooks/
     │   └── useIsMobile.js      # 모바일 브레이크포인트 훅
     ├── styles/
@@ -156,7 +158,8 @@ processflow/
             ├── AddMethodModal.jsx    # 수동/AI 추가 방식 선택
             ├── AIGenerateModal.jsx   # AI 생성 위자드
             ├── EditProcModal.jsx     # 프로세스 메타데이터 수정
-            └── EditGroupModal.jsx    # 그룹명 수정
+            ├── EditGroupModal.jsx    # 그룹명 수정
+            └── RestoreConfirmModal.jsx # 복원(덮어쓰기) 확인
 ```
 
 ## 문서
@@ -174,6 +177,7 @@ processflow/
 | `Phase/Phase8_ParallelBranchDiagram.md` | Swim Lane 다이어그램 병렬 분기/합류 |
 | `Phase/Phase9_DragAndDrop_UXImprovement.md` | 드래그 앤 드롭 순서 변경, UX 개선 |
 | `Phase/Phase10_CodeReview_Refactoring.md` | 코드 구조 점검 및 리팩토링 |
+| `Phase/Phase11_BackupRestore.md` | JSON 백업/복원 + 업로드 시 이미지 리사이즈 |
 
 ## 현재 상태
 
@@ -192,10 +196,11 @@ processflow/
 | 8 — 병렬 분기 다이어그램 | ✅ 완료 | colIndex 기반 SwimLane 병렬 분기/합류 |
 | 9 — 드래그 앤 드롭 및 UX | ✅ 완료 | @dnd-kit 단계 순서 변경, 부서 검증, 병렬 번호 |
 | 10 — 코드 구조 점검 및 리팩토링 | ✅ 완료 | ID 기반 파생 상태, ModalBase 추출, wordExport 모듈 분리 |
+| 11 — 백업 / 복원 + 이미지 리사이즈 | ✅ 완료 | 두 저장소 JSON 내보내기·불러오기(확인창 거쳐 덮어쓰기) + 첨부 이미지 너비 1600px 자동 축소 |
 
 ## 한계점
 
-- **백엔드 데이터베이스 없음** — 모든 데이터가 브라우저에 저장됩니다 (localStorage + IndexedDB). 브라우저 데이터를 삭제하면 모든 데이터가 사라집니다.
+- **백엔드 데이터베이스 없음** — 모든 데이터가 브라우저에 저장됩니다 (localStorage + IndexedDB). 브라우저 데이터를 삭제하면 모든 데이터가 사라지지만, 내장 **백업/복원**(JSON 내보내기·불러오기)으로 데이터를 저장하고 복구할 수 있습니다.
 - **인증 없음** — 단일 사용자, 로컬 전용.
 - **자동화된 테스트 없음** — 수동 테스트 시나리오를 통해 검증이 수행되었습니다.
 - **AI 기능에 API 키 필요** — AI 자동 생성 기능을 사용하려면 `ANTHROPIC_API_KEY` 환경변수를 설정해야 합니다.
